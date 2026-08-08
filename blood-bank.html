@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blood Bank | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Blood Bank specific styles */
+    .blood-inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .blood-card {
+      background: var(--surface-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+
+    .blood-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--danger);
+    }
+
+    .blood-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; width: 100%;
+      background: linear-gradient(0deg, rgba(239, 68, 68, 0.15) 0%, transparent 100%);
+      z-index: 0;
+    }
+
+    .blood-type {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--danger);
+      margin-bottom: 0.5rem;
+      text-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .blood-level {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      position: relative;
+      z-index: 1;
+    }
+
+    .level-low { color: var(--warning); }
+    .level-critical { color: var(--danger); animation: pulse-text 1.5s infinite; }
+
+    @keyframes pulse-text {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-dark);
+      border-radius: 10px;
+      margin-top: 1rem;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--danger);
+      border-radius: 10px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background: var(--surface-dark);
+      width: 100%;
+      max-width: 500px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> CLINICCARE
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> Patients Management</a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> Appointments</a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> Billing & Finance</a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> Inventory/Pharmacy</a></li>
+      
+      <div class="nav-section-label">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> Laboratory</a></li>
+      <li class="nav-item"><a href="blood-bank.html" class="active"><i class="fa-solid fa-droplet"></i> Blood Bank</a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> Emergency ER</a></li>
+      
+      <div class="nav-section-label">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> System Users</a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> Audit Logs</a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;">Blood Bank & Donors</h1>
+        <p class="text-muted">Manage blood inventory and donor records</p>
+      </div>
+      
+      <div class="user-status-pill">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Clinic Manager</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+        <h3 style="font-weight: 700; font-size: 1.2rem;"><i class="fa-solid fa-boxes-stacked text-danger"></i> Inventory Status</h3>
+        <button class="btn btn-primary" style="background: var(--danger); border-color: var(--danger);" onclick="document.getElementById('donation-modal').classList.add('active')">
+          <i class="fa-solid fa-hand-holding-droplet"></i> Register Donation
+        </button>
+      </div>
+
+      <!-- Inventory Grid -->
+      <div class="blood-inventory-grid">
+        <div class="blood-card slide-in" style="animation-delay: 0.1s;">
+          <div class="blood-type">A+</div>
+          <div class="blood-level">24 Units <span style="font-size: 0.75rem; color: var(--text-muted);">(Healthy)</span></div>
+          <div class="progress-bar-container"><div class="progress-fill" style="width: 80%;"></div></div>
+        </div>
+
+        <div class="blood-card slide-in" style="animation-delay: 0.15s;">
+          <div class="blood-type">O+</div>
+          <div class="blood-level">18 Units <span style="font-size: 0.75rem; color: var(--text-muted);">(Good)</span></div>
+          <div class="progress-bar-container"><div class="progress-fill" style="width: 60%;"></div></div>
+        </div>
+
+        <div class="blood-card slide-in" style="animation-delay: 0.2s;">
+          <div class="blood-type">B+</div>
+          <div class="blood-level level-low"><i class="fa-solid fa-triangle-exclamation"></i> 8 Units <span style="font-size: 0.75rem; color: var(--text-muted);">(Low)</span></div>
+          <div class="progress-bar-container"><div class="progress-fill" style="width: 30%; background: var(--warning);"></div></div>
+        </div>
+
+        <div class="blood-card slide-in" style="animation-delay: 0.25s;">
+          <div class="blood-type">O-</div>
+          <div class="blood-level level-critical"><i class="fa-solid fa-siren-on"></i> 2 Units <span style="font-size: 0.75rem; color: var(--text-muted);">(Critical)</span></div>
+          <div class="progress-bar-container"><div class="progress-fill" style="width: 10%;"></div></div>
+        </div>
+        
+        <div class="blood-card slide-in" style="animation-delay: 0.3s;">
+          <div class="blood-type">AB+</div>
+          <div class="blood-level">12 Units <span style="font-size: 0.75rem; color: var(--text-muted);">(Normal)</span></div>
+          <div class="progress-bar-container"><div class="progress-fill" style="width: 45%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Donors Table -->
+      <div class="card slide-in" style="animation-delay: 0.4s;">
+        <div class="card-header">
+          <h3 style="font-weight: 600;"><i class="fa-solid fa-users text-primary"></i> Registered Donors</h3>
+          <div class="search-input-wrapper">
+            <i class="fa-solid fa-search"></i>
+            <input type="text" placeholder="Search donors by name or ID...">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Donor ID</th>
+                <th>Name & Contact</th>
+                <th>Blood Type</th>
+                <th>Last Donation</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-semibold text-primary">#DN-501</td>
+                <td>
+                  <div class="font-semibold">Mahad Ali Nuur</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">061XXXXXXX</div>
+                </td>
+                <td><span style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 800; font-size: 0.9rem;">O-</span></td>
+                <td>15 Jan, 2024</td>
+                <td><span class="badge badge-success">Eligible Now</span></td>
+                <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;"><i class="fa-solid fa-phone"></i> Call</button></td>
+              </tr>
+              <tr>
+                <td class="font-semibold text-primary">#DN-502</td>
+                <td>
+                  <div class="font-semibold">Ahmed Jama</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">061XXXXXXX</div>
+                </td>
+                <td><span style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 800; font-size: 0.9rem;">A+</span></td>
+                <td>10 Mar, 2024</td>
+                <td><span class="badge badge-warning">Wait 2 Months</span></td>
+                <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;" disabled>Wait</button></td>
+              </tr>
+              <tr>
+                <td class="font-semibold text-primary">#DN-503</td>
+                <td>
+                  <div class="font-semibold">Amina Hassan</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">061XXXXXXX</div>
+                </td>
+                <td><span style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 800; font-size: 0.9rem;">B+</span></td>
+                <td>12 Nov, 2023</td>
+                <td><span class="badge badge-success">Eligible Now</span></td>
+                <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;"><i class="fa-solid fa-phone"></i> Call</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Donation Modal -->
+<div class="modal fade-in" id="donation-modal">
+  <div class="modal-content">
+    <div class="modal-header" style="background: rgba(239, 68, 68, 0.1);">
+      <h3 style="font-weight: 700; color: var(--danger);"><i class="fa-solid fa-hand-holding-droplet"></i> Register New Donation</h3>
+      <button class="btn btn-outline" style="border: none; padding: 0.5rem;" onclick="document.getElementById('donation-modal').classList.remove('active')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); document.getElementById('donation-modal').classList.remove('active'); showToast('Donation added to inventory!', 'success');">
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Donor Name / ID</label>
+          <input type="text" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="Search existing donor or enter new name">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Blood Type</label>
+            <select style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--danger); font-weight: 700;">
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Units Collected</label>
+            <input type="number" min="1" max="2" value="1" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--danger);"><i class="fa-solid fa-plus"></i> Add to Inventory</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

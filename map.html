@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map | Clinic System</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fa-solid fa-notes-medical"></i> ClinicCare</div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+      <li class="nav-item"><a href="map.html" class="active"><i class="fa-solid fa-map-location-dot"></i> Map</a></li>
+      <li class="nav-item"><a href="hospital.html"><i class="fa-solid fa-hospital"></i> Hospital Info</a></li>
+    </ul>
+    <div class="user-profile"><div class="avatar">M</div><div><div class="font-semibold text-main" id="sidebar-user-name" style="font-size: 0.9rem;">Mahad Ali</div><div class="text-muted" style="font-size: 0.75rem;">System Analyst</div></div></div>
+  </aside>
+  <main class="main-content fade-in">
+    <header class="top-header"><h2 style="font-size: 1.25rem; font-weight: 600;">Clinic Layout Map</h2><button class="btn btn-outline" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button></header>
+    <div class="content-wrapper">
+      <div class="card slide-in">
+        <div style="height: 400px; background: #e5e7eb; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-lg);">
+          <div style="text-align: center;">
+            <i class="fa-solid fa-map-location-dot" style="font-size: 4rem; color: var(--primary); opacity: 0.5;"></i>
+            <h4 style="margin-top: 1rem;">Interactive Map Placeholder</h4>
+            <p class="text-muted">Floor 1: Reception, Pharmacy, Lab<br>Floor 2: Doctor Rooms, Operation Theater</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

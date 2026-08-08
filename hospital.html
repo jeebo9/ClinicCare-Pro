@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Info | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .info-card { background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; transition: all 0.3s; }
+    .info-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    .info-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+    .info-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .info-item:last-child { border-bottom: none; }
+    .info-item i { color: var(--primary); margin-top: 3px; width: 16px; }
+    .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .dept-card { background: var(--surface-lighter); border-radius: var(--radius-md); padding: 1.5rem; text-align: center; transition: all 0.3s; border: 1px solid transparent; }
+    .dept-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+    .dept-card i { font-size: 2rem; margin-bottom: 0.75rem; }
+    .dept-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .dept-card p { font-size: 0.8rem; color: var(--text-muted); }
+    .floor-map { background: var(--surface-lighter); border-radius: var(--radius-lg); padding: 2rem; position: relative; }
+    .floor-row { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .floor-room { background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.5rem; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s; flex: 1; min-width: 140px; }
+    .floor-room:hover { border-color: var(--primary); background: rgba(37,99,235,0.05); }
+    .hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .hour-row { display: flex; justify-content: space-between; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.85rem; }
+    .hour-row:nth-child(odd) { background: var(--surface-lighter); }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span></div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="hospital.html" class="active"><i class="fa-solid fa-hospital"></i> <span data-i18n="hospital_info">Hospital Info</span></a></li>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;" data-i18n="hospital_info">Hospital Information</h1>
+        <p class="text-muted" data-i18n="hospital_desc">ClinicCare Specialist Hospital — Comprehensive Healthcare Center</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <div class="lang-switcher">
+          <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-light); color: var(--text-main); font-weight: 600; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+        <div class="user-status-pill">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" data-i18n="clinic_manager">Clinic Manager</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <!-- General Info Cards -->
+      <div class="info-grid">
+        <div class="info-card slide-in" style="animation-delay:0.1s;">
+          <h3><i class="fa-solid fa-hospital" style="color: var(--primary);"></i> <span data-i18n="general_overview">General Overview</span></h3>
+          <div class="info-item"><i class="fa-solid fa-building"></i><div><strong>ClinicCare Specialist Hospital</strong><br><span style="color: var(--text-muted);" data-i18n="established">Established 2010 — Multi-Specialty Center</span></div></div>
+          <div class="info-item"><i class="fa-solid fa-location-dot"></i><div><strong data-i18n="address">Address</strong><br>Hodan District, Mogadishu, Somalia</div></div>
+          <div class="info-item"><i class="fa-solid fa-phone"></i><div><strong data-i18n="phone">Phone</strong><br>+252 61 000 000 / +252 61 000 001</div></div>
+          <div class="info-item"><i class="fa-solid fa-envelope"></i><div><strong data-i18n="email">Email</strong><br>info@cliniccare.so</div></div>
+          <div class="info-item"><i class="fa-solid fa-globe"></i><div><strong data-i18n="website">Website</strong><br>www.cliniccare.so</div></div>
+        </div>
+
+        <div class="info-card slide-in" style="animation-delay:0.15s;">
+          <h3><i class="fa-solid fa-clock" style="color: var(--success);"></i> <span data-i18n="operating_hours">Operating Hours</span></h3>
+          <div class="hours-grid">
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="saturday">Saturday</span><span style="color: var(--success);">8:00 AM - 10:00 PM</span></div>
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="sunday">Sunday</span><span style="color: var(--success);">8:00 AM - 10:00 PM</span></div>
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="monday">Monday</span><span style="color: var(--success);">8:00 AM - 10:00 PM</span></div>
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="tuesday">Tuesday</span><span style="color: var(--success);">8:00 AM - 10:00 PM</span></div>
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="wednesday">Wednesday</span><span style="color: var(--success);">8:00 AM - 10:00 PM</span></div>
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="thursday">Thursday</span><span style="color: var(--success);">8:00 AM - 10:00 PM</span></div>
+            <div class="hour-row"><span style="font-weight: 600;" data-i18n="friday">Friday</span><span style="color: var(--warning);">8:00 AM - 12:00 PM</span></div>
+          </div>
+          <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(239,68,68,0.1); border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: var(--danger); text-align: center;">
+            <i class="fa-solid fa-truck-medical"></i> <span data-i18n="er_24h">Emergency ER: 24/7 Available</span>
+          </div>
+        </div>
+
+        <div class="info-card slide-in" style="animation-delay:0.2s;">
+          <h3><i class="fa-solid fa-chart-simple" style="color: var(--warning);"></i> <span data-i18n="quick_stats">Quick Statistics</span></h3>
+          <div class="info-item"><i class="fa-solid fa-bed"></i><div><strong>120</strong> <span data-i18n="total_beds">Total Beds</span></div></div>
+          <div class="info-item"><i class="fa-solid fa-user-doctor"></i><div><strong>24</strong> <span data-i18n="staff_members">Staff Members</span></div></div>
+          <div class="info-item"><i class="fa-solid fa-stethoscope"></i><div><strong>8</strong> <span data-i18n="departments_active">Active Departments</span></div></div>
+          <div class="info-item"><i class="fa-solid fa-ambulance"></i><div><strong>3</strong> <span data-i18n="ambulances">Ambulances</span></div></div>
+          <div class="info-item"><i class="fa-solid fa-flask"></i><div><strong>2</strong> <span data-i18n="lab_units">Laboratory Units</span></div></div>
+        </div>
+      </div>
+
+      <!-- Departments -->
+      <div class="info-card slide-in" style="animation-delay:0.25s; margin-bottom: 2rem;">
+        <h3><i class="fa-solid fa-sitemap" style="color: var(--accent);"></i> <span data-i18n="departments">Departments</span></h3>
+        <div class="dept-grid">
+          <div class="dept-card"><i class="fa-solid fa-stethoscope" style="color: var(--primary);"></i><h4 data-i18n="general_medicine">General Medicine</h4><p>Floor 1</p></div>
+          <div class="dept-card"><i class="fa-solid fa-baby" style="color: var(--success);"></i><h4 data-i18n="pediatrics">Pediatrics</h4><p>Floor 1</p></div>
+          <div class="dept-card"><i class="fa-solid fa-heart-pulse" style="color: var(--danger);"></i><h4 data-i18n="cardiology">Cardiology</h4><p>Floor 2</p></div>
+          <div class="dept-card"><i class="fa-solid fa-bone" style="color: var(--warning);"></i><h4 data-i18n="orthopedics">Orthopedics</h4><p>Floor 2</p></div>
+          <div class="dept-card"><i class="fa-solid fa-microscope" style="color: var(--accent);"></i><h4 data-i18n="laboratory">Laboratory</h4><p>Floor 1</p></div>
+          <div class="dept-card"><i class="fa-solid fa-pills" style="color: var(--primary);"></i><h4 data-i18n="pharmacy">Pharmacy</h4><p>Ground Floor</p></div>
+          <div class="dept-card"><i class="fa-solid fa-truck-medical" style="color: var(--danger);"></i><h4 data-i18n="emergency_dept">Emergency</h4><p>Ground Floor</p></div>
+          <div class="dept-card"><i class="fa-solid fa-x-ray" style="color: var(--text-muted);"></i><h4 data-i18n="radiology">Radiology</h4><p>Floor 1</p></div>
+        </div>
+      </div>
+
+      <!-- Floor Plan -->
+      <div class="info-card slide-in" style="animation-delay:0.3s;">
+        <h3><i class="fa-solid fa-map" style="color: var(--primary);"></i> <span data-i18n="floor_plan">Clinic Floor Plan</span></h3>
+        <div class="floor-map">
+          <p style="font-weight: 700; color: var(--primary); margin-bottom: 0.75rem;"><i class="fa-solid fa-layer-group"></i> Ground Floor</p>
+          <div class="floor-row">
+            <div class="floor-room"><i class="fa-solid fa-door-open" style="color:var(--primary);"></i> Reception</div>
+            <div class="floor-room"><i class="fa-solid fa-pills" style="color:var(--success);"></i> Pharmacy</div>
+            <div class="floor-room"><i class="fa-solid fa-truck-medical" style="color:var(--danger);"></i> Emergency ER</div>
+            <div class="floor-room"><i class="fa-solid fa-wheelchair" style="color:var(--warning);"></i> Waiting Area</div>
+          </div>
+          <p style="font-weight: 700; color: var(--primary); margin: 1rem 0 0.75rem;"><i class="fa-solid fa-layer-group"></i> Floor 1</p>
+          <div class="floor-row">
+            <div class="floor-room"><i class="fa-solid fa-stethoscope" style="color:var(--primary);"></i> General Medicine</div>
+            <div class="floor-room"><i class="fa-solid fa-baby" style="color:var(--success);"></i> Pediatrics</div>
+            <div class="floor-room"><i class="fa-solid fa-microscope" style="color:var(--accent);"></i> Laboratory</div>
+            <div class="floor-room"><i class="fa-solid fa-x-ray" style="color:var(--text-muted);"></i> Radiology</div>
+          </div>
+          <p style="font-weight: 700; color: var(--primary); margin: 1rem 0 0.75rem;"><i class="fa-solid fa-layer-group"></i> Floor 2</p>
+          <div class="floor-row">
+            <div class="floor-room"><i class="fa-solid fa-heart-pulse" style="color:var(--danger);"></i> Cardiology</div>
+            <div class="floor-room"><i class="fa-solid fa-bone" style="color:var(--warning);"></i> Orthopedics</div>
+            <div class="floor-room"><i class="fa-solid fa-bed" style="color:var(--primary);"></i> Operation Theater</div>
+            <div class="floor-room"><i class="fa-solid fa-bed-pulse" style="color:var(--success);"></i> ICU Ward</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

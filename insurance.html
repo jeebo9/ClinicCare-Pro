@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicCare Pro | Insurance Management</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> <span>CLINICCARE</span>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span>Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span>Patients</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Billing</span></a></li>
+      <li class="nav-item"><a href="insurance.html" class="active"><i class="fa-solid fa-shield-heart"></i> <span>Insurance</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a></li>
+    </div>
+  </aside>
+
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800;">Insurance Claims Management</h1>
+        <p class="text-muted">Manage patient insurance policies and process claims.</p>
+      </div>
+      <div>
+        <button class="btn btn-primary" id="btn-new-claim"><i class="fa-solid fa-plus"></i> New Claim</button>
+      </div>
+    </header>
+
+    <div class="stats-grid" style="margin-bottom: 2rem;">
+      <div class="card slide-in">
+        <h3 style="color: var(--primary);">Pending Claims</h3>
+        <div style="font-size: 2rem; font-weight: 800;">12</div>
+        <p class="text-muted" style="font-size: 0.85rem;">Waiting for approval</p>
+      </div>
+      <div class="card slide-in" style="animation-delay: 0.1s;">
+        <h3 style="color: var(--success);">Approved (This Month)</h3>
+        <div style="font-size: 2rem; font-weight: 800;">$14,500</div>
+        <p class="text-muted" style="font-size: 0.85rem;">From 45 claims</p>
+      </div>
+      <div class="card slide-in" style="animation-delay: 0.2s;">
+        <h3 style="color: var(--danger);">Rejected</h3>
+        <div style="font-size: 2rem; font-weight: 800;">3</div>
+        <p class="text-muted" style="font-size: 0.85rem;">Requires review</p>
+      </div>
+    </div>
+
+    <div class="card slide-in" style="animation-delay: 0.3s;">
+      <h3>Recent Claims</h3>
+      <div class="table-responsive" style="margin-top: 1rem;">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Claim ID</th>
+              <th>Patient Name</th>
+              <th>Provider</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="claims-table-body">
+            <tr>
+              <td style="font-weight: 700; color: var(--primary);">CLM-1001</td>
+              <td>Ali Ahmed</td>
+              <td>Somali National Insurance</td>
+              <td>$150.00</td>
+              <td>Oct 12, 2023</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td><button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Review</button></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: var(--primary);">CLM-1002</td>
+              <td>Hawa Hassan</td>
+              <td>Global Health Care</td>
+              <td>$450.00</td>
+              <td>Oct 10, 2023</td>
+              <td><span class="badge badge-success">Approved</span></td>
+              <td><button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">View</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

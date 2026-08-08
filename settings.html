@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    /* Settings specific styles */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+    }
+    
+    .settings-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .settings-tab {
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid transparent;
+    }
+    
+    .settings-tab:hover {
+      background: var(--surface-dark);
+      color: var(--text-main);
+    }
+    
+    .settings-tab.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+
+    .settings-panel {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    .settings-panel.active {
+      display: block;
+    }
+
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+
+    .setting-info h4 {
+      margin-bottom: 0.25rem;
+      color: var(--text-main);
+    }
+    
+    .setting-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Toggle Switch */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--surface-lighter);
+      transition: .4s;
+      border-radius: 34px;
+      border: 1px solid var(--border);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="audit_logs">Audit Logs</span></a></li>
+      <li class="nav-item"><a href="settings.html" class="active"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;" data-i18n="settings">System Settings</h1>
+        <p class="text-muted" data-i18n="settings_desc">Configure your premium clinic environment</p>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+          <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-light); color: var(--text-main); font-weight: 600; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+
+        <div class="user-status-pill">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">Clinic Manager</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="settings-grid">
+        <!-- Settings Sidebar -->
+        <div class="settings-nav card">
+          <div class="settings-tab active" onclick="switchTab('general')">
+            <i class="fa-solid fa-sliders"></i> <span data-i18n="general_settings">General</span>
+          </div>
+          <div class="settings-tab" onclick="switchTab('appearance')">
+            <i class="fa-solid fa-palette"></i> <span data-i18n="appearance_ui">Appearance</span>
+          </div>
+          <div class="settings-tab" onclick="switchTab('notifications')">
+            <i class="fa-solid fa-bell"></i> <span data-i18n="notification_prefs">Notifications</span>
+          </div>
+          <div class="settings-tab" onclick="switchTab('security')">
+            <i class="fa-solid fa-shield-halved"></i> <span data-i18n="security_settings">Security & Privacy</span>
+          </div>
+          <div class="settings-tab" onclick="switchTab('backup')">
+            <i class="fa-solid fa-database"></i> <span data-i18n="db_backups">Database & Backup</span>
+          </div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="card" style="padding: 2rem;">
+          
+          <!-- General Tab -->
+          <div id="general" class="settings-panel active">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary);"><i class="fa-solid fa-sliders"></i> <span data-i18n="general_settings">General Settings</span></h2>
+            
+            <div class="form-group">
+              <label class="form-label" data-i18n="clinic_name">Clinic Name</label>
+              <input type="text" class="form-control" value="ClinicCare Pro Multi-Specialty Hospital">
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" data-i18n="contact_email">Contact Email</label>
+              <input type="email" class="form-control" value="admin@cliniccare.so">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" data-i18n="system_language">System Language</label>
+              <select class="form-control" id="settings-lang-select" onchange="i18n.setLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="so">Somali</option>
+                <option value="ar">Arabic</option>
+              </select>
+            </div>
+
+            <div class="setting-item" style="border-top: 1px solid var(--border); margin-top: 2rem;">
+              <div class="setting-info">
+                <h4 data-i18n="maintenance_mode">Maintenance Mode</h4>
+                <p data-i18n="maintenance_desc">Prevent users from logging in during system updates.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+              <button class="btn btn-primary" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="save_settings">Save General Settings</span></button>
+            </div>
+          </div>
+
+          <!-- Appearance Tab -->
+          <div id="appearance" class="settings-panel">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary);"><i class="fa-solid fa-palette"></i> <span data-i18n="appearance_ui">Appearance & UI</span></h2>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4 data-i18n="dark_mode">Dark Mode (Elite)</h4>
+                <p data-i18n="dark_mode_desc">Use the premium dark aesthetic for the entire system.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4 data-i18n="compact_sidebar">Compact Sidebar</h4>
+                <p data-i18n="compact_sidebar_desc">Hide labels and only show icons to save screen space.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4 data-i18n="micro_animations">Enable Micro-animations</h4>
+                <p data-i18n="micro_animations_desc">Show smooth transitions and glassmorphism hover effects.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+              <button class="btn btn-primary" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="apply_appearance">Apply Appearance</span></button>
+            </div>
+          </div>
+
+          <!-- Notifications Tab -->
+          <div id="notifications" class="settings-panel">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary);"><i class="fa-solid fa-bell"></i> Notification Preferences</h2>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Sound Alerts</h4>
+                <p>Play a gentle sound when a new appointment or alert occurs.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Toast Notifications</h4>
+                <p>Show modern pop-up notifications on screen.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Low Inventory Alerts</h4>
+                <p>Warn when pharmacy stock drops below critical threshold.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+              <button class="btn btn-primary" onclick="saveSettings()"><i class="fa-solid fa-floppy-disk"></i> Save Preferences</button>
+            </div>
+          </div>
+
+          <!-- Security Tab -->
+          <div id="security" class="settings-panel">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary);"><i class="fa-solid fa-shield-halved"></i> Security Settings</h2>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Two-Factor Authentication (2FA)</h4>
+                <p>Require an extra verification step during login.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Auto-Logout</h4>
+                <p>Automatically log out inactive users after 15 minutes.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--danger); border-radius: var(--radius-md);">
+              <h4 style="color: var(--danger); margin-bottom: 0.5rem;">Reset System Passwords</h4>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Force all staff to change their passwords on next login.</p>
+              <button class="btn btn-outline" style="color: var(--danger); border-color: var(--danger);" onclick="showToast('Password reset initiated.', 'warning')"><i class="fa-solid fa-key"></i> Force Reset</button>
+            </div>
+          </div>
+
+          <!-- Backup Tab -->
+          <div id="backup" class="settings-panel">
+            <h2 style="margin-bottom: 1.5rem; color: var(--primary);"><i class="fa-solid fa-database"></i> Database & Backups</h2>
+            
+            <div class="setting-item">
+              <div class="setting-info">
+                <h4>Automated Daily Backups</h4>
+                <p>System will backup data.json every night at 2:00 AM.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+              <div style="padding: 1.5rem; background: var(--surface-lighter); border-radius: var(--radius-md); border: 1px solid var(--border); text-align: center;">
+                <i class="fa-solid fa-cloud-arrow-down" style="font-size: 2.5rem; color: var(--success); margin-bottom: 1rem;"></i>
+                <h4 style="margin-bottom: 0.5rem;">Export Data</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Download all patients and appointments data.</p>
+                <button class="btn btn-outline" style="width: 100%;" onclick="showToast('Data exported successfully to Downloads folder.', 'success')">Download JSON</button>
+              </div>
+              
+              <div style="padding: 1.5rem; background: var(--surface-lighter); border-radius: var(--radius-md); border: 1px solid var(--border); text-align: center;">
+                <i class="fa-solid fa-broom" style="font-size: 2.5rem; color: var(--danger); margin-bottom: 1rem;"></i>
+                <h4 style="margin-bottom: 0.5rem;">Clear Old Logs</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Delete audit logs older than 6 months.</p>
+                <button class="btn btn-outline" style="width: 100%; color: var(--danger); border-color: var(--danger);" onclick="showToast('Old logs cleaned up.', 'success')">Clean Up</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  // Tab Switching Logic
+  function switchTab(tabId) {
+    // Remove active class from all tabs and panels
+    document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.settings-panel').forEach(p => p.classList.remove('active'));
+    
+    // Add active class to clicked tab and corresponding panel
+    event.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const lang = localStorage.getItem('clinic_lang') || 'en';
+    const select = document.getElementById('settings-lang-select');
+    if (select) select.value = lang;
+    
+    window.addEventListener('languageChanged', (e) => {
+        if (select) select.value = e.detail;
+    });
+  });
+
+  // Save Settings Function (Mock)
+  function saveSettings() {
+    if (typeof showToast === 'function') {
+      showToast('Settings saved successfully!', 'success');
+    } else {
+      alert('Settings saved successfully!');
+    }
+  }
+</script>
+</body>
+</html>

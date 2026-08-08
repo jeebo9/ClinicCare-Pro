@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratory | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Lab specific styles */
+    .test-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: var(--surface-lighter);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .test-type-badge i {
+      color: var(--primary);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-ready { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-processing { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); animation: pulse-border 2s infinite; }
+    .status-urgent { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); animation: pulse-bg 1.5s infinite; }
+
+    @keyframes pulse-border {
+      0% { border-color: rgba(59, 130, 246, 0.2); }
+      50% { border-color: rgba(59, 130, 246, 0.8); }
+      100% { border-color: rgba(59, 130, 246, 0.2); }
+    }
+
+    @keyframes pulse-bg {
+      0% { background: rgba(239, 68, 68, 0.1); }
+      50% { background: rgba(239, 68, 68, 0.2); }
+      100% { background: rgba(239, 68, 68, 0.1); }
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background: var(--surface-dark);
+      width: 100%;
+      max-width: 600px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> CLINICCARE
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> Patients Management</a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> Appointments</a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> Billing & Finance</a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> Inventory/Pharmacy</a></li>
+      
+      <div class="nav-section-label">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html" class="active"><i class="fa-solid fa-microscope"></i> Laboratory</a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> Blood Bank</a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> Emergency ER</a></li>
+      
+      <div class="nav-section-label">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> System Users</a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> Audit Logs</a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;">Laboratory Services</h1>
+        <p class="text-muted">Manage diagnostic tests, queue, and patient reports</p>
+      </div>
+      
+      <div class="user-status-pill">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Clinic Manager</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      
+      <!-- Stats -->
+      <div class="stats-grid" style="margin-bottom: 2rem;">
+        <div class="stat-card slide-in" style="animation-delay: 0.1s;">
+          <div class="stat-info">
+            <h3>Pending Tests</h3>
+            <div class="value" style="color: var(--warning);">24</div>
+          </div>
+          <div class="stat-icon orange"><i class="fa-solid fa-spinner fa-spin-pulse"></i></div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.2s;">
+          <div class="stat-info">
+            <h3>Completed Today</h3>
+            <div class="value" style="color: var(--success);">15</div>
+          </div>
+          <div class="stat-icon green"><i class="fa-solid fa-check-double"></i></div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.3s; border: 1px solid rgba(239, 68, 68, 0.3); background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), transparent);">
+          <div class="stat-info">
+            <h3>Urgent Requests</h3>
+            <div class="value" style="color: var(--danger);">3</div>
+          </div>
+          <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);"><i class="fa-solid fa-fire-flame-curved"></i></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+        <div class="search-input-wrapper" style="width: 350px;">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Search by patient name or Test ID...">
+        </div>
+        <button class="btn btn-primary" onclick="document.getElementById('new-test-modal').classList.add('active')">
+          <i class="fa-solid fa-flask-vial"></i> New Test Request
+        </button>
+      </div>
+
+      <!-- Test Queue Table -->
+      <div class="card slide-in" style="animation-delay: 0.4s;">
+        <div class="card-header">
+          <h3 style="font-weight: 600;"><i class="fa-solid fa-list-ul text-primary"></i> Live Test Queue</h3>
+          <div style="display: flex; gap: 0.5rem;">
+            <select class="form-control" style="width: auto; font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+              <option>All Status</option>
+              <option>Pending</option>
+              <option>Processing</option>
+              <option>Ready</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Test ID</th>
+                <th>Patient Name</th>
+                <th>Test Panel</th>
+                <th>Requested By</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              <tr style="background: rgba(239, 68, 68, 0.05);">
+                <td class="font-semibold text-danger">#LAB-7703</td>
+                <td>
+                  <div class="font-semibold">Hawa Hassan</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Age: 42 | Female</div>
+                </td>
+                <td><span class="test-type-badge"><i class="fa-solid fa-vial"></i> Malaria Ag</span></td>
+                <td><div style="font-size: 0.85rem;"><i class="fa-solid fa-user-doctor text-muted"></i> Dr. Jama</div></td>
+                <td><span class="status-badge status-urgent"><i class="fa-solid fa-triangle-exclamation"></i> URGENT</span></td>
+                <td><button class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;"><i class="fa-solid fa-flask"></i> Process</button></td>
+              </tr>
+
+              <tr>
+                <td class="font-semibold text-primary">#LAB-7702</td>
+                <td>
+                  <div class="font-semibold">Ali Ahmed</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Age: 55 | Male</div>
+                </td>
+                <td><span class="test-type-badge"><i class="fa-solid fa-droplet" style="color: var(--danger);"></i> Blood Glucose</span></td>
+                <td><div style="font-size: 0.85rem;"><i class="fa-solid fa-user-doctor text-muted"></i> Dr. Halima</div></td>
+                <td><span class="status-badge status-processing"><i class="fa-solid fa-spinner fa-spin"></i> Processing</span></td>
+                <td><button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;"><i class="fa-solid fa-eye"></i> View</button></td>
+              </tr>
+
+              <tr>
+                <td class="font-semibold text-primary">#LAB-7701</td>
+                <td>
+                  <div class="font-semibold">Aamina Farah</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">Age: 28 | Female</div>
+                </td>
+                <td><span class="test-type-badge"><i class="fa-solid fa-microscope"></i> Full Blood Count</span></td>
+                <td><div style="font-size: 0.85rem;"><i class="fa-solid fa-user-doctor text-muted"></i> Dr. Jama</div></td>
+                <td><span class="status-badge status-ready"><i class="fa-solid fa-check"></i> Ready</span></td>
+                <td>
+                  <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; border-color: var(--success); color: var(--success);" onclick="showToast('Downloading Lab Report PDF...', 'success')">
+                    <i class="fa-solid fa-file-pdf"></i> Report
+                  </button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- New Test Request Modal -->
+<div class="modal fade-in" id="new-test-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-weight: 700; color: var(--primary);"><i class="fa-solid fa-flask-vial"></i> Create Test Request</h3>
+      <button class="btn btn-outline" style="border: none; padding: 0.5rem;" onclick="document.getElementById('new-test-modal').classList.remove('active')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); document.getElementById('new-test-modal').classList.remove('active'); showToast('Test request added to queue!', 'success');">
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Patient Name / ID</label>
+          <input type="text" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="Search Patient...">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Test Panel</label>
+          <select style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);">
+            <option>Full Blood Count (FBC)</option>
+            <option>Blood Glucose (Fasting)</option>
+            <option>Malaria Antigen Test</option>
+            <option>Lipid Profile</option>
+            <option>Urinalysis</option>
+            <option>Liver Function Test (LFT)</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Requested By</label>
+            <select style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);">
+              <option>Dr. Jama</option>
+              <option>Dr. Halima</option>
+              <option>Dr. Ahmed</option>
+              <option>Other / ER</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Priority Level</label>
+            <select style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);">
+              <option>Routine (Normal)</option>
+              <option style="color: var(--danger); font-weight: 700;">URGENT (Stat)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;"><i class="fa-solid fa-check"></i> Submit Test Request</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

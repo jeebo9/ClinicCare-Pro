@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicCare Pro | Telemedicine</title>
+  <meta name="description" content="ClinicCare Pro Telemedicine - Virtual video consultations and secure patient-doctor chat.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/app.js" defer></script>
+  <style>
+    .video-room {
+      background: #0a0d16;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 16/9;
+      max-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+
+    .video-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      color: #475569;
+      text-align: center;
+    }
+
+    .doctor-avatar-big {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4338ca, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      box-shadow: 0 0 40px rgba(99,102,241,0.4);
+      animation: pulse-ring 2s ease infinite;
+    }
+
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
+      70%  { box-shadow: 0 0 0 20px rgba(99,102,241,0); }
+      100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+    }
+
+    .self-cam {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      width: 140px;
+      height: 90px;
+      background: #1e293b;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.15);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #475569;
+      font-size: 1.5rem;
+    }
+
+    .video-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .ctrl-btn:hover { transform: scale(1.1); }
+
+    .ctrl-btn.mute  { background: rgba(239,68,68,0.15);   color: var(--danger); }
+    .ctrl-btn.cam   { background: rgba(16,185,129,0.15);  color: var(--success); }
+    .ctrl-btn.share { background: rgba(99,102,241,0.15);  color: var(--primary); }
+    .ctrl-btn.chat  { background: rgba(14,165,233,0.15);  color: var(--accent); }
+    .ctrl-btn.end   { background: var(--danger); color: white; width: 68px; height: 68px; font-size: 1.4rem; box-shadow: 0 4px 20px rgba(239,68,68,0.4); }
+    .ctrl-btn.end:hover { background: #dc2626; box-shadow: 0 8px 30px rgba(239,68,68,0.5); }
+
+    /* Chat Sidebar */
+    .chat-sidebar {
+      background: var(--surface-main);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 600px;
+    }
+
+    .chat-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chat-header .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 6px var(--success);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 1.25rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .msg-bubble {
+      max-width: 80%;
+      padding: 0.85rem 1.1rem;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .msg-bubble.received {
+      background: var(--surface-hover);
+      border: 1px solid var(--border);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-bubble.sent {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+    .sent .msg-time { color: rgba(255,255,255,0.65); }
+
+    .chat-input-row {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .chat-input-row input:focus { border-color: var(--primary); }
+
+    .send-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .send-btn:hover { transform: scale(1.1); }
+
+    /* Doctor Card */
+    .doctor-card {
+      background: var(--surface-main);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .doctor-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .doctor-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i><span>CLINICCARE</span>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a></li>
+      <li class="nav-item"><a href="telemedicine.html" class="active"><i class="fa-solid fa-video"></i><span>Telemedicine</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style:none;">
+        <a href="login.html" style="color:var(--danger);">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </a>
+      </li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;">
+          <i class="fa-solid fa-video" style="color:var(--primary);"></i> Telemedicine
+        </h1>
+        <p style="color:var(--text-muted);">Virtual consultations &bull; Secure, encrypted connections</p>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle-btn"><i class="fa-solid fa-moon"></i></button>
+        <div class="user-status-pill">
+          <div class="user-avatar">MA</div>
+          <div class="user-info">
+            <span class="user-name">Mahad Ali</span>
+            <span class="user-role">Clinic Manager</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+      <!-- Video Area -->
+      <div>
+        <!-- Status Bar -->
+        <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--radius-md);padding:0.75rem 1.25rem;display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;font-size:0.9rem;font-weight:600;color:var(--success);">
+          <i class="fa-solid fa-circle" style="font-size:0.5rem;"></i>
+          Session Ready &bull; <span style="color:var(--text-muted);font-weight:400;">End-to-end encrypted via WebRTC</span>
+        </div>
+
+        <div class="video-room">
+          <div class="video-placeholder">
+            <div class="doctor-avatar-big">JM</div>
+            <div>
+              <div style="font-size:1.1rem;font-weight:700;color:#94a3b8;margin-bottom:0.3rem;">Dr. Jama Mohamed</div>
+              <div style="font-size:0.85rem;color:#475569;">Cardiology &bull; Waiting to connect...</div>
+            </div>
+            <button class="btn btn-primary" onclick="startCall()" id="start-call-btn" style="padding:0.85rem 2rem;">
+              <i class="fa-solid fa-video"></i> Start Video Call
+            </button>
+          </div>
+          <!-- Self cam preview -->
+          <div class="self-cam"><i class="fa-solid fa-user"></i></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="video-controls">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <button class="ctrl-btn mute" id="btn-mute" onclick="toggleControl(this,'mute')" title="Mute">
+              <i class="fa-solid fa-microphone"></i>
+            </button>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Mute</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <button class="ctrl-btn cam" id="btn-cam" onclick="toggleControl(this,'cam')" title="Camera">
+              <i class="fa-solid fa-video"></i>
+            </button>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Camera</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <button class="ctrl-btn end" title="End Call" onclick="endCall()">
+              <i class="fa-solid fa-phone-slash"></i>
+            </button>
+            <span style="font-size:0.7rem;color:var(--text-muted);">End</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <button class="ctrl-btn share" title="Share Screen">
+              <i class="fa-solid fa-screen-users"></i>
+            </button>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Share</span>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0.3rem;">
+            <button class="ctrl-btn chat" title="Chat">
+              <i class="fa-solid fa-comment-dots"></i>
+            </button>
+            <span style="font-size:0.7rem;color:var(--text-muted);">Chat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Sidebar -->
+      <div class="chat-sidebar">
+        <div class="chat-header">
+          <div class="status-dot"></div>
+          <span>Session Chat</span>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;margin-left:auto;">Dr. Jama</span>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div>
+            <div class="msg-bubble received">Assalamu Alaikum! I'm here. How are you feeling today?</div>
+            <div class="msg-time">Dr. Jama &bull; 10:01 AM</div>
+          </div>
+          <div>
+            <div class="msg-bubble sent">Alaikum salaan, Doctor. I've been having mild chest discomfort.</div>
+            <div class="msg-time" style="text-align:right;">10:03 AM</div>
+          </div>
+          <div>
+            <div class="msg-bubble received">I see. Can you rate the pain from 1-10? And does it radiate to your left arm?</div>
+            <div class="msg-time">Dr. Jama &bull; 10:04 AM</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-msg-input" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendMsg()">
+          <button class="send-btn" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available Doctors -->
+    <div style="background:var(--surface-main);backdrop-filter:var(--glass-blur);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;">
+      <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem;">
+        <i class="fa-solid fa-user-doctor" style="color:var(--primary);"></i>
+        Available Doctors
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;">
+        <div class="doctor-card">
+          <div class="doctor-avatar" style="background:linear-gradient(135deg,#4338ca,#6366f1);">JM</div>
+          <div>
+            <div style="font-weight:700;">Dr. Jama Mohamed</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Cardiology</div>
+            <div style="margin-top:0.4rem;"><span style="font-size:0.78rem;font-weight:600;color:var(--success);">● Online</span></div>
+          </div>
+          <button class="btn btn-primary" style="margin-left:auto;padding:0.5rem 1rem;font-size:0.82rem;">
+            <i class="fa-solid fa-video"></i> Call
+          </button>
+        </div>
+        <div class="doctor-card">
+          <div class="doctor-avatar" style="background:linear-gradient(135deg,#059669,#10b981);">HA</div>
+          <div>
+            <div style="font-weight:700;">Dr. Halima Ahmed</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Pediatrics</div>
+            <div style="margin-top:0.4rem;"><span style="font-size:0.78rem;font-weight:600;color:var(--success);">● Online</span></div>
+          </div>
+          <button class="btn btn-primary" style="margin-left:auto;padding:0.5rem 1rem;font-size:0.82rem;">
+            <i class="fa-solid fa-video"></i> Call
+          </button>
+        </div>
+        <div class="doctor-card">
+          <div class="doctor-avatar" style="background:linear-gradient(135deg,#d97706,#f59e0b);">MO</div>
+          <div>
+            <div style="font-weight:700;">Dr. Mohamed Omar</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">General Medicine</div>
+            <div style="margin-top:0.4rem;"><span style="font-size:0.78rem;font-weight:600;color:var(--warning);">● Busy</span></div>
+          </div>
+          <button class="btn btn-outline" style="margin-left:auto;padding:0.5rem 1rem;font-size:0.82rem;">
+            Schedule
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  let muted = false, camOff = false;
+
+  function toggleControl(btn, type) {
+    if (type === 'mute') {
+      muted = !muted;
+      btn.querySelector('i').className = muted ? 'fa-solid fa-microphone-slash' : 'fa-solid fa-microphone';
+      btn.style.background = muted ? 'rgba(239,68,68,0.25)' : '';
+    } else if (type === 'cam') {
+      camOff = !camOff;
+      btn.querySelector('i').className = camOff ? 'fa-solid fa-video-slash' : 'fa-solid fa-video';
+    }
+  }
+
+  function startCall() {
+    const btn = document.getElementById('start-call-btn');
+    const placeholder = btn.closest('.video-placeholder');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
+    btn.disabled = true;
+    setTimeout(() => {
+      placeholder.innerHTML = `
+        <div style="color:#94a3b8;font-size:1.1rem;font-weight:600;">
+          <i class="fa-solid fa-circle-check" style="color:var(--success);font-size:2rem;display:block;margin-bottom:0.75rem;"></i>
+          Connected to Dr. Jama
+        </div>`;
+    }, 2000);
+  }
+
+  function endCall() {
+    if (confirm('End the video call?')) {
+      window.location.reload();
+    }
+  }
+
+  function sendMsg() {
+    const input = document.getElementById('chat-msg-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const chat = document.getElementById('chat-messages');
+    const div = document.createElement('div');
+    const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    div.innerHTML = `<div class="msg-bubble sent">${text}</div><div class="msg-time" style="text-align:right;">${now}</div>`;
+    chat.appendChild(div);
+    input.value = '';
+    chat.scrollTop = chat.scrollHeight;
+    // Auto-reply
+    setTimeout(() => {
+      const reply = document.createElement('div');
+      reply.innerHTML = `<div class="msg-bubble received">Thank you, I've noted that. Let me review your latest results.</div><div class="msg-time">Dr. Jama &bull; ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>`;
+      chat.appendChild(reply);
+      chat.scrollTop = chat.scrollHeight;
+    }, 1800);
+  }
+</script>
+</body>
+</html>

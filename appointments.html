@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointments | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+  <style>
+    /* Appointments specific styles */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-scheduled { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .status-completed { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+    .status-cancelled { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .status-waiting { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); animation: pulse-waiting 2s infinite; }
+
+    @keyframes pulse-waiting {
+      0% { border-color: rgba(245, 158, 11, 0.2); }
+      50% { border-color: rgba(245, 158, 11, 0.8); }
+      100% { border-color: rgba(245, 158, 11, 0.2); }
+    }
+
+    .time-badge {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      background: var(--bg-dark);
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .time-badge i { color: var(--primary); }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background: var(--surface-dark);
+      width: 100%;
+      max-width: 600px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+    
+    .date-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: var(--surface-lighter);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.3rem 0.6rem;
+      min-width: 55px;
+    }
+    
+    .date-indicator .month { font-size: 0.7rem; text-transform: uppercase; font-weight: 700; color: var(--danger); }
+    .date-indicator .day { font-size: 1.2rem; font-weight: 900; color: var(--text-main); line-height: 1; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html" class="active"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="audit_logs">Audit Logs</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.5px;">
+          <i class="fa-solid fa-calendar-check" style="color:var(--primary);"></i> Appointments
+        </h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.2rem;">Manage patient bookings and clinic queues</p>
+      </div>
+      <div class="header-actions">
+        <select onchange="i18n && i18n.setLanguage(this.value)" style="padding:0.5rem 1rem;border-radius:999px;border:1px solid var(--border);background:var(--surface-main);color:var(--text-main);font-weight:600;font-size:0.85rem;cursor:pointer;backdrop-filter:blur(12px);">
+          <option value="en">EN</option>
+          <option value="so">SO</option>
+          <option value="ar">AR</option>
+        </select>
+        <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Dark Mode"><i class="fa-solid fa-moon"></i></button>
+        <div class="user-status-pill">
+          <div class="user-avatar">MA</div>
+          <div class="user-info">
+            <span class="user-name" id="sidebar-user-name">Mahad Ali</span>
+            <span class="user-role">Clinic Manager</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+        <!-- Calendar View -->
+        <div class="card slide-in" style="animation-delay: 0.2s; margin-bottom: 2rem;">
+          <div class="card-header">
+            <h3 style="font-weight: 600;"><i class="fa-solid fa-calendar-days text-primary"></i> Appointments Calendar</h3>
+          </div>
+          <div id="appointments-calendar" style="padding: 1rem;"></div>
+        </div>
+      
+      <!-- Stats -->
+      <div class="stats-grid" style="margin-bottom: 2rem;">
+        <div class="stat-card slide-in" style="animation-delay: 0.1s;">
+          <div class="stat-info">
+            <h3 data-i18n="todays_appointments">Today's Appointments</h3>
+            <div class="value" style="color: var(--primary);">42</div>
+          </div>
+          <div class="stat-icon blue"><i class="fa-solid fa-calendar-day"></i></div>
+        </div>
+        
+        <div class="stat-card slide-in" style="animation-delay: 0.2s;">
+          <div class="stat-info">
+            <h3 data-i18n="waiting_room">Waiting Room</h3>
+            <div class="value" style="color: var(--warning);">8</div>
+          </div>
+          <div class="stat-icon orange"><i class="fa-solid fa-hourglass-half"></i></div>
+        </div>
+
+        <div class="stat-card slide-in" style="animation-delay: 0.3s;">
+          <div class="stat-info">
+            <h3 data-i18n="completed_today">Completed Today</h3>
+            <div class="value" style="color: var(--success);">15</div>
+          </div>
+          <div class="stat-icon green"><i class="fa-solid fa-calendar-check"></i></div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+        <div class="search-input-wrapper" style="width: 400px;">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" data-i18n="search_placeholder" placeholder="Search by patient name, doctor, or ID...">
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn btn-primary" onclick="document.getElementById('new-appointment-modal').classList.add('active')">
+            <i class="fa-solid fa-plus"></i> <span data-i18n="new_appointment">Book Appointment</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Appointments Table -->
+      <div class="card slide-in" style="animation-delay: 0.4s;">
+        <div class="card-header">
+          <h3 style="font-weight: 600;"><i class="fa-solid fa-list text-primary"></i> Master Schedule</h3>
+          <div style="display: flex; gap: 0.5rem;">
+            <select class="form-control" style="width: auto; font-size: 0.8rem; padding: 0.4rem 0.8rem;">
+              <option>Today</option>
+              <option>Tomorrow</option>
+              <option>This Week</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th data-i18n="time">Time</th>
+                <th data-i18n="patient_details">Patient Details</th>
+                <th data-i18n="assigned_doctor">Assigned Doctor</th>
+                <th data-i18n="status">Status</th>
+                <th data-i18n="action">Action</th>
+              </tr>
+            </thead>
+            <tbody id="appointments-table-body">
+              
+              <!-- Dummy Data matching golden design -->
+              <tr>
+                <td>
+                  <div class="date-indicator">
+                    <span class="month">May</span>
+                    <span class="day">01</span>
+                  </div>
+                </td>
+                <td><span class="time-badge"><i class="fa-regular fa-clock"></i> 09:30 AM</span></td>
+                <td>
+                  <div class="font-semibold text-primary">Ali Ahmed</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">ID: #PT-1044</div>
+                </td>
+                <td><div style="font-size: 0.85rem;"><i class="fa-solid fa-user-doctor text-muted"></i> Dr. Jama (Surgeon)</div></td>
+                <td><span class="status-badge status-scheduled"><i class="fa-solid fa-calendar"></i> Scheduled</span></td>
+                <td>
+                  <button class="btn btn-outline" style="padding: 0.4rem; font-size: 0.8rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button class="btn btn-outline" style="padding: 0.4rem; font-size: 0.8rem; color: var(--danger); border-color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
+                  <button class="btn btn-outline" style="padding: 0.4rem; font-size: 0.8rem;" onclick="showToast('SMS Reminder Sent!', 'success')"><i class="fa-solid fa-bell"></i></button>
+                </td>
+              </tr>
+
+              <tr style="background: rgba(245, 158, 11, 0.05);">
+                <td>
+                  <div class="date-indicator">
+                    <span class="month">May</span>
+                    <span class="day">01</span>
+                  </div>
+                </td>
+                <td><span class="time-badge"><i class="fa-regular fa-clock"></i> 10:00 AM</span></td>
+                <td>
+                  <div class="font-semibold text-primary">Hawa Hassan</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">ID: #PT-2051</div>
+                </td>
+                <td><div style="font-size: 0.85rem;"><i class="fa-solid fa-user-doctor text-muted"></i> Dr. Halima (Pediatrician)</div></td>
+                <td><span class="status-badge status-waiting"><i class="fa-solid fa-hourglass-half"></i> Waiting in Lobby</span></td>
+                <td>
+                  <button class="btn btn-outline" style="padding: 0.4rem; font-size: 0.8rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button class="btn btn-primary" style="padding: 0.4rem; font-size: 0.8rem;"><i class="fa-solid fa-door-open"></i> Admit</button>
+                  <button class="btn btn-outline" style="padding: 0.4rem; font-size: 0.8rem;" onclick="showToast('SMS Reminder Sent!', 'success')"><i class="fa-solid fa-bell"></i></button>
+                </td>
+              </tr>
+
+              <tr>
+                <td>
+                  <div class="date-indicator">
+                    <span class="month">May</span>
+                    <span class="day">01</span>
+                  </div>
+                </td>
+                <td><span class="time-badge"><i class="fa-regular fa-clock"></i> 08:00 AM</span></td>
+                <td>
+                  <div class="font-semibold text-primary">Jamal Farah</div>
+                  <div style="font-size: 0.75rem; color: var(--text-muted);">ID: #PT-0982</div>
+                </td>
+                <td><div style="font-size: 0.85rem;"><i class="fa-solid fa-user-doctor text-muted"></i> Dr. Ali (Cardiologist)</div></td>
+                <td><span class="status-badge status-completed"><i class="fa-solid fa-check"></i> Completed</span></td>
+                <td>
+                  <button class="btn btn-outline" style="padding: 0.4rem; font-size: 0.8rem;" disabled><i class="fa-solid fa-check"></i></button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Add Appointment Modal -->
+<div class="modal fade-in" id="new-appointment-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-weight: 700; color: var(--primary);"><i class="fa-solid fa-calendar-plus"></i> Book New Appointment</h3>
+      <button class="btn btn-outline" style="border: none; padding: 0.5rem;" onclick="document.getElementById('new-appointment-modal').classList.remove('active')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="appointment-form" onsubmit="event.preventDefault(); document.getElementById('new-appointment-modal').classList.remove('active'); showToast('Appointment scheduled successfully!', 'success');">
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Search Patient</label>
+          <input type="text" id="a-patient" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="Enter patient name or ID...">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Assigned Doctor</label>
+          <select id="a-doctor" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);">
+            <option>Dr. Jama (Surgeon)</option>
+            <option>Dr. Halima (Pediatrician)</option>
+            <option>Dr. Ali (Cardiologist)</option>
+            <option>Dr. Sarah (Neurologist)</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Date</label>
+            <input type="date" id="a-date" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Time</label>
+            <input type="time" id="a-time" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;"><i class="fa-solid fa-check"></i> Confirm Booking</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('appointments-calendar');
+    if (calendarEl) {
+      function renderCalendar() {
+        const lang = localStorage.getItem('clinic_lang') || 'en';
+        const localeMap = { 'en': 'en', 'so': 'so', 'ar': 'ar' };
+        
+        if (window.calendar) window.calendar.destroy();
+        
+        window.calendar = new FullCalendar.Calendar(calendarEl, {
+          locale: localeMap[lang] || 'en',
+          direction: lang === 'ar' ? 'rtl' : 'ltr',
+          initialView: 'dayGridMonth',
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+          },
+          height: 500,
+          events: [
+            {
+              title: 'Ali Ahmed (Dr. Jama)',
+              start: '2026-05-01T09:30:00',
+              end: '2026-05-01T10:00:00',
+              color: '#3b82f6'
+            },
+            {
+              title: 'Hawa Hassan (Dr. Halima)',
+              start: '2026-05-01T10:00:00',
+              end: '2026-05-01T10:30:00',
+              color: '#f59e0b'
+            },
+            {
+              title: 'Jamal Farah (Dr. Ali)',
+              start: '2026-05-01T08:00:00',
+              end: '2026-05-01T08:30:00',
+              color: '#10b981'
+            }
+          ]
+        });
+        window.calendar.render();
+      }
+      
+      renderCalendar();
+      window.addEventListener('languageChanged', renderCalendar);
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>System Users | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    /* Users specific styles */
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .user-card {
+      background: var(--surface-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: transform 0.3s, border-color 0.3s;
+      position: relative;
+    }
+
+    .user-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+    }
+
+    .user-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .user-info .avatar {
+      width: 50px;
+      height: 50px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .role-badge {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 800;
+      margin-top: 0.25rem;
+      display: inline-block;
+    }
+
+    .role-admin { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .role-doctor { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); }
+    .role-staff { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+
+    .user-stats {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
+      margin-top: 1rem;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .user-actions {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background: var(--surface-dark);
+      width: 100%;
+      max-width: 500px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="users.html" class="active"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="audit_logs">Audit Logs</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;" data-i18n="system_users">System Users & Roles</h1>
+        <p class="text-muted" data-i18n="users_desc">Manage staff access and permissions</p>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+          <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-light); color: var(--text-main); font-weight: 600; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+
+        <div class="user-status-pill">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" data-i18n="clinic_manager">Clinic Manager</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <div class="search-input-wrapper" style="width: 350px;">
+          <i class="fa-solid fa-search"></i>
+          <input type="text" placeholder="Search users by name or role...">
+        </div>
+        <button class="btn btn-primary" onclick="document.getElementById('new-user-modal').classList.add('active')">
+          <i class="fa-solid fa-user-plus"></i> Add New User
+        </button>
+      </div>
+
+      <div class="user-grid">
+        <!-- User Card 1 -->
+        <div class="user-card slide-in" style="animation-delay: 0.1s;">
+          <div class="user-actions">
+            <button class="btn btn-outline" style="padding: 0.4rem 0.6rem; border: none;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+          </div>
+          <div class="user-card-header">
+            <div class="user-info">
+              <div class="avatar" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">MA</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: var(--text-main);">Mahad Ali</h3>
+                <div class="role-badge role-admin">System Admin</div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;"><i class="fa-solid fa-envelope" style="margin-right: 0.5rem;"></i> mahad_analyst</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-building" style="margin-right: 0.5rem;"></i> IT Department</p>
+          
+          <div class="user-stats">
+            <div class="stat-item">
+              <div class="stat-value" style="color: var(--success);">Online</div>
+              <div class="stat-label">Status</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">Today, 09:40</div>
+              <div class="stat-label">Last Login</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Card 2 -->
+        <div class="user-card slide-in" style="animation-delay: 0.2s;">
+          <div class="user-actions">
+            <button class="btn btn-outline" style="padding: 0.4rem 0.6rem; border: none;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+          </div>
+          <div class="user-card-header">
+            <div class="user-info">
+              <div class="avatar" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">DA</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: var(--text-main);">Dr. Ahmed Nur</h3>
+                <div class="role-badge role-doctor">Senior Doctor</div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;"><i class="fa-solid fa-envelope" style="margin-right: 0.5rem;"></i> dr_ahmed</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-building" style="margin-right: 0.5rem;"></i> General Practice</p>
+          
+          <div class="user-stats">
+            <div class="stat-item">
+              <div class="stat-value" style="color: var(--text-muted);">Offline</div>
+              <div class="stat-label">Status</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">Yesterday</div>
+              <div class="stat-label">Last Login</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Card 3 -->
+        <div class="user-card slide-in" style="animation-delay: 0.3s;">
+          <div class="user-actions">
+            <button class="btn btn-outline" style="padding: 0.4rem 0.6rem; border: none;"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+          </div>
+          <div class="user-card-header">
+            <div class="user-info">
+              <div class="avatar" style="background: linear-gradient(135deg, #10b981, #047857);">RB</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: var(--text-main);">Barwaqo Hassan</h3>
+                <div class="role-badge role-staff">Receptionist</div>
+              </div>
+            </div>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;"><i class="fa-solid fa-envelope" style="margin-right: 0.5rem;"></i> reception_barwaqo</p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);"><i class="fa-solid fa-building" style="margin-right: 0.5rem;"></i> Front Desk</p>
+          
+          <div class="user-stats">
+            <div class="stat-item">
+              <div class="stat-value" style="color: var(--success);">Online</div>
+              <div class="stat-label">Status</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">Today, 08:30</div>
+              <div class="stat-label">Last Login</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade-in" id="new-user-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-weight: 700; color: var(--primary);">Create New User</h3>
+      <button class="btn btn-outline" style="border: none; padding: 0.5rem;" onclick="document.getElementById('new-user-modal').classList.remove('active')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); document.getElementById('new-user-modal').classList.remove('active'); showToast('User created successfully!', 'success');">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Full Name</label>
+            <input type="text" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="e.g. Ali Jama">
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Username</label>
+            <input type="text" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="e.g. ali_jama">
+          </div>
+        </div>
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Role</label>
+          <select style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);">
+            <option>Admin</option>
+            <option>Doctor</option>
+            <option>Receptionist</option>
+            <option>Lab Technician</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">Temporary Password</label>
+          <input type="password" style="width: 100%; padding: 0.75rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required value="password123">
+          <p style="font-size: 0.75rem; color: var(--warning); margin-top: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> User will be forced to change this on first login.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-user-plus"></i> Create User</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

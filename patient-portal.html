@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicCare Pro | Patient Portal</title>
+  <meta name="description" content="ClinicCare Pro Patient Portal - View appointments, prescriptions, lab results, and medical history.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/app.js" defer></script>
+  <style>
+    /* Patient Portal - Softer, Warmer Aesthetic */
+    .portal-hero {
+      background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #0ea5e9 100%);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      color: white;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .portal-hero::before {
+      content: '';
+      position: absolute;
+      right: -5%; top: -30%;
+      width: 300px; height: 300px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+    .portal-hero::after {
+      content: '';
+      position: absolute;
+      right: 10%; bottom: -40%;
+      width: 200px; height: 200px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .portal-hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      position: relative;
+      z-index: 1;
+    }
+    .portal-hero p {
+      opacity: 0.85;
+      position: relative;
+      z-index: 1;
+      margin-top: 0.4rem;
+    }
+    .portal-hero .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .btn-white {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .btn-white:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+
+    .info-card {
+      background: var(--surface-main);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .info-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .info-card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+    .info-card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .info-card .value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .info-card .sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--primary), transparent);
+      border-radius: 999px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.75rem;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-dot {
+      position: absolute;
+      left: -1.95rem;
+      top: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 3px solid var(--surface-solid);
+    }
+    .timeline-date {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    .timeline-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+    .timeline-note {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Prescription Card */
+    .rx-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--surface-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      transition: all 0.2s;
+    }
+    .rx-card:hover {
+      border-color: var(--primary);
+      background: var(--surface-hover);
+    }
+    .rx-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(99,102,241,0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .rx-name { font-weight: 700; font-size: 0.95rem; }
+    .rx-detail { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i>
+      <span>Patient Portal</span>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="patient-portal.html" class="active"><i class="fa-solid fa-house-medical"></i><span>My Dashboard</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>My Appointments</span></a></li>
+      <li class="nav-item"><a href="#prescriptions"><i class="fa-solid fa-pills"></i><span>Prescriptions</span></a></li>
+      <li class="nav-item"><a href="#lab-results"><i class="fa-solid fa-flask"></i><span>Lab Results</span></a></li>
+      <li class="nav-item"><a href="telemedicine.html"><i class="fa-solid fa-video"></i><span>Telemedicine</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>My Bills</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style:none;">
+        <a href="login.html" style="color:var(--danger);">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </a>
+      </li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <!-- Theme toggle -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+      <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Dark Mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="portal-hero slide-in">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <h1>Welcome back, Ali Ahmed 👋</h1>
+          <p>Patient ID: <strong>PT-0012</strong> &bull; Blood Type: <strong>O+</strong> &bull; Last Visit: Oct 12, 2023</p>
+          <div class="hero-actions">
+            <a href="appointments.html" class="btn-white">
+              <i class="fa-solid fa-calendar-plus"></i> Book Appointment
+            </a>
+            <a href="telemedicine.html" class="btn-white">
+              <i class="fa-solid fa-video"></i> Video Consult
+            </a>
+          </div>
+        </div>
+        <div style="text-align:center;position:relative;z-index:1;">
+          <div style="width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:2rem;font-family:'Outfit',sans-serif;font-weight:800;color:white;">AA</div>
+          <div style="font-size:0.8rem;margin-top:0.5rem;opacity:0.8;">Active Patient</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="stats-grid" style="margin-bottom:2rem;">
+      <div class="info-card slide-in" style="animation-delay:0.1s;">
+        <div class="info-card-icon" style="background:rgba(245,158,11,0.12);color:var(--warning);">
+          <i class="fa-solid fa-calendar-day"></i>
+        </div>
+        <h3>Next Appointment</h3>
+        <div class="value">Tomorrow, 10:00 AM</div>
+        <div class="sub">Dr. Jama &bull; Cardiology</div>
+        <a href="appointments.html" style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.35rem;font-size:0.82rem;color:var(--primary);text-decoration:none;font-weight:600;">
+          View details <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="info-card slide-in" style="animation-delay:0.2s;">
+        <div class="info-card-icon" style="background:rgba(16,185,129,0.12);color:var(--success);">
+          <i class="fa-solid fa-flask"></i>
+        </div>
+        <h3>Recent Lab Results</h3>
+        <div class="value">Complete Blood Count</div>
+        <div class="sub" style="color:var(--success);">Normal &bull; Ready to download</div>
+        <a href="#lab-results" style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.35rem;font-size:0.82rem;color:var(--success);text-decoration:none;font-weight:600;">
+          Download PDF <i class="fa-solid fa-download"></i>
+        </a>
+      </div>
+
+      <div class="info-card slide-in" style="animation-delay:0.3s;">
+        <div class="info-card-icon" style="background:rgba(99,102,241,0.12);color:var(--primary);">
+          <i class="fa-solid fa-pills"></i>
+        </div>
+        <h3>Active Prescriptions</h3>
+        <div class="value">Amlodipine 5mg</div>
+        <div class="sub">Refill available &bull; Pharmacy B</div>
+        <a href="#prescriptions" style="margin-top:0.75rem;display:inline-flex;align-items:center;gap:0.35rem;font-size:0.82rem;color:var(--primary);text-decoration:none;font-weight:600;">
+          View all <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Medical History + Prescriptions -->
+    <div style="display:grid;grid-template-columns:3fr 2fr;gap:1.5rem;margin-bottom:1.5rem;">
+      <!-- Timeline -->
+      <div class="info-card slide-in" style="animation-delay:0.4s;" id="history">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem;">
+            <i class="fa-solid fa-clock-rotate-left" style="color:var(--primary);"></i> Medical History
+          </div>
+          <span class="badge badge-primary">2 Records</span>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--primary);"></div>
+            <div class="timeline-date">Oct 12, 2023 &bull; Dr. Halima</div>
+            <div class="timeline-title">General Checkup</div>
+            <div class="timeline-note">Patient reported mild headaches. Blood pressure normal. Recommended more hydration and light exercise daily.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--success);"></div>
+            <div class="timeline-date">Sep 05, 2023 &bull; Dr. Jama</div>
+            <div class="timeline-title">Cardiology Review</div>
+            <div class="timeline-note">ECG normal. Continue current medication (Amlodipine 5mg). Follow up in 3 months.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--warning);"></div>
+            <div class="timeline-date">Jun 20, 2023 &bull; Dr. Halima</div>
+            <div class="timeline-title">Blood Work & Labs</div>
+            <div class="timeline-note">CBC results normal. Cholesterol slightly elevated. Dietary changes recommended.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prescriptions -->
+      <div class="info-card slide-in" style="animation-delay:0.5s;" id="prescriptions">
+        <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:0.5rem;margin-bottom:1.5rem;">
+          <i class="fa-solid fa-pills" style="color:var(--primary);"></i> Prescriptions
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;" id="lab-results">
+          <div class="rx-card">
+            <div class="rx-icon"><i class="fa-solid fa-capsules"></i></div>
+            <div>
+              <div class="rx-name">Amlodipine 5mg</div>
+              <div class="rx-detail">Once daily &bull; 30 days left &bull; <span style="color:var(--success);">Active</span></div>
+            </div>
+          </div>
+          <div class="rx-card">
+            <div class="rx-icon"><i class="fa-solid fa-tablets"></i></div>
+            <div>
+              <div class="rx-name">Aspirin 100mg</div>
+              <div class="rx-detail">Once daily &bull; 15 days left &bull; <span style="color:var(--warning);">Low</span></div>
+            </div>
+          </div>
+          <div class="rx-card">
+            <div class="rx-icon"><i class="fa-solid fa-pills"></i></div>
+            <div>
+              <div class="rx-name">Atorvastatin 10mg</div>
+              <div class="rx-detail">Once at night &bull; Completed &bull; <span style="color:var(--text-muted);">Expired</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.5rem;border-top:1px solid var(--border);padding-top:1.25rem;">
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:1rem;font-size:0.95rem;">Lab Results</div>
+          <div class="rx-card">
+            <div class="rx-icon" style="background:rgba(16,185,129,0.1);color:var(--success);"><i class="fa-solid fa-flask"></i></div>
+            <div>
+              <div class="rx-name">Complete Blood Count</div>
+              <div class="rx-detail">Oct 2023 &bull; <span style="color:var(--success);">Normal</span> &bull; <a href="#" style="color:var(--primary);text-decoration:none;font-weight:600;">Download</a></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Telemedicine Banner -->
+    <div style="background:linear-gradient(135deg,rgba(99,102,241,0.08),rgba(14,165,233,0.08));border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-lg);padding:2rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;" class="slide-in">
+      <div>
+        <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:var(--text-main);margin-bottom:0.5rem;">
+          <i class="fa-solid fa-video" style="color:var(--primary);"></i> Need a consultation?
+        </div>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Connect with your doctor from home via our integrated Telemedicine platform.</p>
+      </div>
+      <a href="telemedicine.html" class="btn btn-primary" style="white-space:nowrap;">
+        <i class="fa-solid fa-video"></i> Start Video Call
+      </a>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

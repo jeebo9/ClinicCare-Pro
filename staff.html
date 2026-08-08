@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Directory | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    .staff-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+    .staff-card { background: var(--surface-dark); border-radius: var(--radius-lg); padding: 2rem; text-align: center; border: 1px solid var(--border); transition: all 0.3s; position: relative; overflow: hidden; }
+    .staff-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 15px 30px rgba(0,0,0,0.06); }
+    .staff-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .staff-avatar { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: 800; margin: 0 auto 1.25rem; border: 3px solid white; box-shadow: 0 0 0 3px var(--primary-glow); }
+    .staff-info h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .staff-role { color: var(--primary); font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .staff-dept { display: inline-block; padding: 0.2rem 0.75rem; background: var(--surface-lighter); border-radius: 50px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; }
+    .staff-contact { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+    .staff-status { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 50px; margin: 0.75rem 0; }
+    .status-available { background: rgba(16,185,129,0.1); color: var(--success); }
+    .status-busy { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .status-off { background: rgba(100,116,139,0.1); color: var(--text-muted); }
+    .staff-actions { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+    .filter-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .filter-btn { padding: 0.5rem 1rem; border-radius: 50px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover, .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span></div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="staff.html" class="active"><i class="fa-solid fa-user-doctor"></i> <span data-i18n="staff_directory">Staff Directory</span></a></li>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="audit_logs">Audit Logs</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;" data-i18n="staff_directory">Staff Directory</h1>
+        <p class="text-muted" data-i18n="staff_desc">Manage doctors, nurses, and clinic personnel</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <div class="lang-switcher">
+          <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-light); color: var(--text-main); font-weight: 600; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="showToast('Add Staff feature coming soon!', 'success')"><i class="fa-solid fa-plus"></i> <span data-i18n="add_staff">Add Staff</span></button>
+        <div class="user-status-pill">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" data-i18n="clinic_manager">Clinic Manager</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <!-- Stats -->
+      <div class="stats-grid" style="margin-bottom: 2rem;">
+        <div class="stat-card slide-in" style="animation-delay: 0.1s;">
+          <div class="stat-info"><h3 data-i18n="total_staff">Total Staff</h3><div class="value" style="color: var(--primary);">24</div></div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.15s;">
+          <div class="stat-info"><h3 data-i18n="doctors_available">Doctors Available</h3><div class="value" style="color: var(--success);">8</div></div>
+        </div>
+        <div class="stat-card slide-in" style="animation-delay: 0.2s;">
+          <div class="stat-info"><h3 data-i18n="on_duty_today">On Duty Today</h3><div class="value" style="color: var(--warning);">16</div></div>
+        </div>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="search-input-wrapper" style="margin-bottom: 1.5rem;">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" id="staff-search" data-i18n="search_staff_placeholder" placeholder="Search by name, department, or role..." oninput="filterStaff(this.value)">
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="filterDept('all', this)" data-i18n="all">All</button>
+        <button class="filter-btn" onclick="filterDept('surgeon', this)" data-i18n="surgery">Surgery</button>
+        <button class="filter-btn" onclick="filterDept('pediatrics', this)" data-i18n="pediatrics">Pediatrics</button>
+        <button class="filter-btn" onclick="filterDept('cardiology', this)" data-i18n="cardiology">Cardiology</button>
+        <button class="filter-btn" onclick="filterDept('nursing', this)" data-i18n="nursing">Nursing</button>
+        <button class="filter-btn" onclick="filterDept('lab', this)" data-i18n="laboratory">Laboratory</button>
+      </div>
+
+      <!-- Staff Grid -->
+      <div class="staff-grid" id="staff-grid">
+        <!-- Dr. Jama -->
+        <div class="staff-card slide-in" data-dept="surgeon" style="animation-delay:0.1s;">
+          <div class="staff-avatar" style="background: rgba(37,99,235,0.1); color: var(--primary);">JA</div>
+          <div class="staff-info"><h3>Dr. Jama Ahmed</h3></div>
+          <div class="staff-role" data-i18n="general_surgeon">General Surgeon</div>
+          <div class="staff-dept">Surgery Department</div>
+          <div class="staff-status status-available"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> <span data-i18n="available">Available</span></div>
+          <div class="staff-contact"><i class="fa-solid fa-envelope"></i> jama@cliniccare.so</div>
+          <div class="staff-contact"><i class="fa-solid fa-phone"></i> +252 61 111 1111</div>
+          <div class="staff-actions">
+            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="view_profile">Profile</button>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="schedule">Schedule</button>
+          </div>
+        </div>
+        <!-- Dr. Halima -->
+        <div class="staff-card slide-in" data-dept="pediatrics" style="animation-delay:0.15s;">
+          <div class="staff-avatar" style="background: rgba(16,185,129,0.1); color: var(--success);">HN</div>
+          <div class="staff-info"><h3>Dr. Halima Nuur</h3></div>
+          <div class="staff-role" data-i18n="pediatrician">Pediatrician</div>
+          <div class="staff-dept">Pediatrics Department</div>
+          <div class="staff-status status-busy"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> <span data-i18n="in_consultation">In Consultation</span></div>
+          <div class="staff-contact"><i class="fa-solid fa-envelope"></i> halima@cliniccare.so</div>
+          <div class="staff-contact"><i class="fa-solid fa-phone"></i> +252 61 222 2222</div>
+          <div class="staff-actions">
+            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="view_profile">Profile</button>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="schedule">Schedule</button>
+          </div>
+        </div>
+        <!-- Dr. Ali -->
+        <div class="staff-card slide-in" data-dept="cardiology" style="animation-delay:0.2s;">
+          <div class="staff-avatar" style="background: rgba(245,158,11,0.1); color: var(--warning);">AM</div>
+          <div class="staff-info"><h3>Dr. Ali Mahamed</h3></div>
+          <div class="staff-role" data-i18n="cardiologist">Cardiologist</div>
+          <div class="staff-dept">Cardiology Department</div>
+          <div class="staff-status status-available"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> <span data-i18n="available">Available</span></div>
+          <div class="staff-contact"><i class="fa-solid fa-envelope"></i> ali@cliniccare.so</div>
+          <div class="staff-contact"><i class="fa-solid fa-phone"></i> +252 61 333 3333</div>
+          <div class="staff-actions">
+            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="view_profile">Profile</button>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="schedule">Schedule</button>
+          </div>
+        </div>
+        <!-- BarwaaQo -->
+        <div class="staff-card slide-in" data-dept="nursing" style="animation-delay:0.25s;">
+          <div class="staff-avatar" style="background: rgba(79,70,229,0.1); color: var(--accent);">BD</div>
+          <div class="staff-info"><h3>BarwaaQo Dahir</h3></div>
+          <div class="staff-role" data-i18n="head_receptionist">Head Receptionist</div>
+          <div class="staff-dept">Reception</div>
+          <div class="staff-status status-available"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> <span data-i18n="available">Available</span></div>
+          <div class="staff-contact"><i class="fa-solid fa-envelope"></i> barwaqo@cliniccare.so</div>
+          <div class="staff-contact"><i class="fa-solid fa-phone"></i> +252 61 444 4444</div>
+          <div class="staff-actions">
+            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="view_profile">Profile</button>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="schedule">Schedule</button>
+          </div>
+        </div>
+        <!-- Nurse Amina -->
+        <div class="staff-card slide-in" data-dept="nursing" style="animation-delay:0.3s;">
+          <div class="staff-avatar" style="background: rgba(239,68,68,0.1); color: var(--danger);">AO</div>
+          <div class="staff-info"><h3>Nurse Amina Omar</h3></div>
+          <div class="staff-role" data-i18n="head_nurse">Head Nurse</div>
+          <div class="staff-dept">Nursing</div>
+          <div class="staff-status status-busy"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> <span data-i18n="on_rounds">On Rounds</span></div>
+          <div class="staff-contact"><i class="fa-solid fa-envelope"></i> amina@cliniccare.so</div>
+          <div class="staff-contact"><i class="fa-solid fa-phone"></i> +252 61 555 5555</div>
+          <div class="staff-actions">
+            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="view_profile">Profile</button>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="schedule">Schedule</button>
+          </div>
+        </div>
+        <!-- Lab Tech -->
+        <div class="staff-card slide-in" data-dept="lab" style="animation-delay:0.35s;">
+          <div class="staff-avatar" style="background: rgba(16,185,129,0.1); color: var(--success);">FK</div>
+          <div class="staff-info"><h3>Faadumo Khalif</h3></div>
+          <div class="staff-role" data-i18n="lab_technician">Lab Technician</div>
+          <div class="staff-dept">Laboratory</div>
+          <div class="staff-status status-off"><i class="fa-solid fa-circle" style="font-size: 0.5rem;"></i> <span data-i18n="off_duty">Off Duty</span></div>
+          <div class="staff-contact"><i class="fa-solid fa-envelope"></i> faadumo@cliniccare.so</div>
+          <div class="staff-contact"><i class="fa-solid fa-phone"></i> +252 61 666 6666</div>
+          <div class="staff-actions">
+            <button class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="view_profile">Profile</button>
+            <button class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;" data-i18n="schedule">Schedule</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/app.js"></script>
+<script>
+  function filterDept(dept, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.staff-card').forEach(card => {
+      card.style.display = (dept === 'all' || card.dataset.dept === dept) ? '' : 'none';
+    });
+  }
+  function filterStaff(q) {
+    const query = q.toLowerCase();
+    document.querySelectorAll('.staff-card').forEach(card => {
+      card.style.display = card.textContent.toLowerCase().includes(query) ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>

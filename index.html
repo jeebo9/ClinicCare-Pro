@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicCare Pro | Elite Healthcare Management</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: rgba(37, 99, 235, 0.1);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg-light: #ffffff;
+      --bg-alt: #f8fafc;
+      --border: #f1f5f9;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    .landing-nav {
+      padding: 1.25rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+      box-sizing: border-box;
+    }
+
+    .brand {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .hero {
+      padding: 11rem 5% 8rem 5%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 60%);
+      min-height: 80vh;
+      box-sizing: border-box;
+    }
+
+    .hero-badge {
+      padding: 0.6rem 1.25rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(37, 99, 235, 0.1);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 1.5rem;
+      max-width: 950px;
+      color: var(--text-main);
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin-bottom: 3.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-main {
+      padding: 1.1rem 2.2rem;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-primary-hero {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary-hero:hover {
+      background: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-secondary-hero {
+      background: white;
+      color: var(--text-main);
+      border: 2px solid #e2e8f0;
+    }
+
+    .btn-secondary-hero:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--bg-alt);
+      transform: translateY(-2px);
+    }
+
+    .features-section {
+      padding: 5rem 5% 10rem 5%;
+      background: var(--bg-alt);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .f-card {
+      padding: 3rem;
+      border-radius: 28px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .f-card:hover {
+      transform: translateY(-12px);
+      border-color: var(--primary);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+    }
+
+    .f-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .f-card h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+      color: var(--text-main);
+    }
+
+    .f-card p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 6rem 5%;
+      background: #0f172a;
+      color: #94a3b8;
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero { padding-top: 9rem; }
+      .hero h1 { font-size: 2.75rem; }
+      .hero-cta { flex-direction: column; width: 100%; max-width: 400px; }
+      .btn-main { width: 100%; justify-content: center; }
+    }
+
+    /* Language Switcher Styles */
+    .lang-switcher {
+      margin-right: 1.5rem;
+      position: relative;
+    }
+    .lang-switcher select {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .lang-switcher select:hover {
+      border-color: var(--primary);
+    }
+    [dir="rtl"] .lang-switcher {
+      margin-right: 0;
+      margin-left: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="landing-nav">
+    <a href="#" class="brand">
+      <i class="fa-solid fa-notes-medical"></i>
+      <span data-i18n="brand_name">CLINICCARE PRO</span>
+    </a>
+    <div class="nav-links" style="display: flex; align-items: center;">
+      <div class="lang-switcher">
+        <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)">
+          <option value="en">English</option>
+          <option value="so">Somali</option>
+          <option value="ar">العربية</option>
+        </select>
+      </div>
+      <a href="login.html" class="btn-main btn-primary-hero" style="padding: 0.75rem 1.5rem; font-size: 0.9rem; border-radius: 10px;">
+        <span data-i18n="sign_in">Sign In</span> <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero-badge">
+        <i class="fa-solid fa-sparkles"></i>
+        <span data-i18n="advanced_clinical_intelligence">Advanced Clinical Intelligence</span>
+      </div>
+      <h1 data-i18n="hero_title">The Future of <span>Healthcare Management</span> is Here</h1>
+      <p data-i18n="hero_desc">Empower your clinic with an elite digital ecosystem. From smart patient records to advanced laboratory analytics, ClinicCare Pro delivers excellence at every touchpoint.</p>
+      
+      <div class="hero-cta">
+        <a href="login.html" class="btn-main btn-primary-hero">
+          <span data-i18n="get_started">Get Started Now</span> <i class="fa-solid fa-rocket"></i>
+        </a>
+        <a href="#features" class="btn-main btn-secondary-hero">
+          <span data-i18n="explore_features">Explore Features</span> <i class="fa-solid fa-layer-group"></i>
+        </a>
+      </div>
+
+      <div style="margin-top: 7rem; display: flex; gap: 4rem; justify-content: center; color: var(--text-muted); flex-wrap: wrap;">
+        <div style="text-align: left;">
+          <div style="font-size: 1.75rem; color: var(--text-main); font-weight: 800;" data-i18n="fast">Fast</div>
+          <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;" data-i18n="cloud_performance">Cloud Performance</div>
+        </div>
+        <div style="text-align: left;">
+          <div style="font-size: 1.75rem; color: var(--text-main); font-weight: 800;" data-i18n="secure">Secure</div>
+          <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;" data-i18n="encryption">256-Bit Encryption</div>
+        </div>
+        <div style="text-align: left;">
+          <div style="font-size: 1.75rem; color: var(--text-main); font-weight: 800;" data-i18n="modern">Modern</div>
+          <div style="font-size: 0.8rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;" data-i18n="intuitive_ux">Intuitive UX</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="features-section">
+      <div class="section-header">
+        <h2 data-i18n="powerful_features">Powerful Features for Elite Clinics</h2>
+        <p style="color: var(--text-muted); font-size: 1.1rem;" data-i18n="features_desc">Everything you need to run a high-performance healthcare facility.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="f-card">
+          <div class="f-icon"><i class="fa-solid fa-id-card-clip"></i></div>
+          <h3 data-i18n="unified_records">Unified Health Records</h3>
+          <p data-i18n="unified_records_desc">Access comprehensive patient medical history, allergies, and treatment plans in a single, secure interface.</p>
+        </div>
+
+        <div class="f-card">
+          <div class="f-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+          <h3 data-i18n="smart_scheduling">Smart Scheduling</h3>
+          <p data-i18n="smart_scheduling_desc">Reduce no-shows with automated SMS and Email reminders tailored to your clinic's specific workflow.</p>
+        </div>
+
+        <div class="f-card">
+          <div class="f-icon"><i class="fa-solid fa-microscope"></i></div>
+          <h3 data-i18n="laboratory_intel">Laboratory Intel</h3>
+          <p data-i18n="laboratory_intel_desc">Seamless laboratory integration with automated result syncing and diagnostic alerts for physicians.</p>
+        </div>
+
+        <div class="f-card">
+          <div class="f-icon"><i class="fa-solid fa-prescription-bottle-medical"></i></div>
+          <h3 data-i18n="inventory_control">Inventory Control</h3>
+          <p data-i18n="inventory_control_desc">Real-time tracking of pharmacy stock with predictive ordering and expiration date management.</p>
+        </div>
+
+        <div class="f-card">
+          <div class="f-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <h3 data-i18n="financial_suite">Financial Suite</h3>
+          <p data-i18n="financial_suite_desc">Integrated billing with ZAAD & eDahab support, automated invoicing, and deep financial reporting.</p>
+        </div>
+
+        <div class="f-card">
+          <div class="f-icon"><i class="fa-solid fa-brain-circuit"></i></div>
+          <h3 data-i18n="ai_diagnostics">AI Diagnostics</h3>
+          <p data-i18n="ai_diagnostics_desc">Utilize built-in AI assistants to help with data analysis and routine clinical documentation tasks.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="#" class="footer-brand">
+      <i class="fa-solid fa-notes-medical"></i>
+      <span data-i18n="brand_name">CLINICCARE PRO</span>
+    </a>
+    <p style="margin-bottom: 2rem;" data-i18n="footer_motto">The Gold Standard in Digital Health Management Systems.</p>
+    <p style="font-size: 0.85rem; opacity: 0.6;" data-i18n="copyright">&copy; 2026 ClinicCare Pro v4.5. All rights reserved. Designed for Elite Healthcare.</p>
+  </footer>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

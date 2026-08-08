@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency ER | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Emergency specific styles */
+    .er-header-banner {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(185, 28, 28, 0.1));
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .er-header-banner::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; width: 200px; height: 100%;
+      background: radial-gradient(circle, rgba(239,68,68,0.2) 0%, transparent 70%);
+    }
+
+    .pulse-dot {
+      width: 12px; height: 12px;
+      background-color: var(--danger);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      animation: pulse-red 1.5s infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes pulse-red {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .level-1 { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .level-2 { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .level-3 { background: rgba(59, 130, 246, 0.1); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2); }
+
+    .ambulance-card {
+      background: var(--surface-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: transform 0.2s;
+    }
+
+    .ambulance-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+    }
+
+    .ambulance-icon {
+      font-size: 2.5rem;
+      color: var(--text-muted);
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-lighter);
+      border-radius: 12px;
+    }
+
+    .ambulance-card.active .ambulance-icon {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+      animation: pulse-red 2s infinite;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+      animation: fadeIn 0.3s;
+    }
+
+    .modal-content {
+      background: var(--surface-dark);
+      width: 100%;
+      max-width: 550px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> CLINICCARE
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> Patients Management</a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> Appointments</a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> Billing & Finance</a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> Inventory/Pharmacy</a></li>
+      
+      <div class="nav-section-label">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> Laboratory</a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> Blood Bank</a></li>
+      <li class="nav-item"><a href="emergency.html" class="active"><i class="fa-solid fa-truck-medical"></i> Emergency ER</a></li>
+      
+      <div class="nav-section-label">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> System Users</a></li>
+      <li class="nav-item"><a href="audit.html"><i class="fa-solid fa-clipboard-list"></i> Audit Logs</a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> Settings</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;">Emergency & ER</h1>
+        <p class="text-muted">Manage critical patients and dispatch ambulances</p>
+      </div>
+      
+      <div class="user-status-pill">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Clinic Manager</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      
+      <!-- Critical Banner -->
+      <div class="er-header-banner slide-in">
+        <div>
+          <h2 style="color: var(--danger); font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center;">
+            <span class="pulse-dot"></span> 2 Active Critical Cases
+          </h2>
+          <p style="color: var(--text-main);">The ER department is currently operating at <strong style="color: var(--warning);">High Capacity</strong>.</p>
+        </div>
+        <button class="btn btn-primary" style="background: var(--danger); padding: 1rem 2rem; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);" onclick="document.getElementById('dispatch-modal').classList.add('active')">
+          <i class="fa-solid fa-phone-volume" style="animation: shake 2s infinite;"></i> Dispatch Ambulance
+        </button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Active ER List -->
+        <div class="card slide-in" style="animation-delay: 0.1s;">
+          <div class="card-header">
+            <h3 style="font-weight: 700;"><i class="fa-solid fa-heart-pulse text-danger"></i> Current ER Patients</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Case ID</th>
+                  <th>Patient / Info</th>
+                  <th>Location</th>
+                  <th>Priority</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: rgba(239, 68, 68, 0.05);">
+                  <td class="font-semibold text-danger">#ER-1025</td>
+                  <td>
+                    <div class="font-semibold">Unknown Male (Approx. 35)</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Severe Road Accident Trauma</div>
+                  </td>
+                  <td>Wadada 30-ka</td>
+                  <td><span class="badge level-1"><i class="fa-solid fa-triangle-exclamation"></i> LEVEL 1</span></td>
+                  <td><span class="badge" style="background: var(--danger); color: white;">En Route (ETA: 2m)</span></td>
+                </tr>
+                <tr>
+                  <td class="font-semibold text-primary">#ER-1026</td>
+                  <td>
+                    <div class="font-semibold">Fatima Ali Jama</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Severe Asthma Attack</div>
+                  </td>
+                  <td>Heliwa District</td>
+                  <td><span class="badge level-2">LEVEL 2</span></td>
+                  <td><span class="badge badge-success">Admitted - Room 04</span></td>
+                </tr>
+                <tr>
+                  <td class="font-semibold text-primary">#ER-1027</td>
+                  <td>
+                    <div class="font-semibold">Jama Abdi</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Chest Pain / Possible MI</div>
+                  </td>
+                  <td>Walk-in</td>
+                  <td><span class="badge level-1"><i class="fa-solid fa-triangle-exclamation"></i> LEVEL 1</span></td>
+                  <td><span class="badge badge-warning">In Triage</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Ambulance Fleet Status -->
+        <div class="card slide-in" style="animation-delay: 0.2s;">
+          <div class="card-header">
+            <h3 style="font-weight: 700;"><i class="fa-solid fa-truck-medical text-primary"></i> Fleet Status</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            
+            <div class="ambulance-card active">
+              <div class="ambulance-icon"><i class="fa-solid fa-truck-medical"></i></div>
+              <div>
+                <h4 style="margin-bottom: 0.25rem;">Ambulance AMB-01</h4>
+                <p style="font-size: 0.8rem; color: var(--danger); font-weight: 700;">Dispatched (ER-1025)</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Driver: Abdiqadir</p>
+              </div>
+            </div>
+
+            <div class="ambulance-card">
+              <div class="ambulance-icon"><i class="fa-solid fa-truck-medical"></i></div>
+              <div>
+                <h4 style="margin-bottom: 0.25rem;">Ambulance AMB-02</h4>
+                <p style="font-size: 0.8rem; color: var(--success); font-weight: 700;">Available at Station</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Driver: Hassan</p>
+              </div>
+            </div>
+
+            <div class="ambulance-card">
+              <div class="ambulance-icon"><i class="fa-solid fa-truck-medical"></i></div>
+              <div>
+                <h4 style="margin-bottom: 0.25rem;">Ambulance AMB-03</h4>
+                <p style="font-size: 0.8rem; color: var(--warning); font-weight: 700;">Maintenance</p>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Out of service today</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Dispatch Modal -->
+<div class="modal fade-in" id="dispatch-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 style="font-weight: 700; color: var(--danger); display: flex; align-items: center; gap: 0.5rem;">
+        <span class="pulse-dot"></span> Dispatch Ambulance
+      </h3>
+      <button class="btn btn-outline" style="border: none; padding: 0.5rem;" onclick="document.getElementById('dispatch-modal').classList.remove('active')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="event.preventDefault(); document.getElementById('dispatch-modal').classList.remove('active'); showToast('Ambulance AMB-02 dispatched successfully to location!', 'success');">
+        
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Caller Information</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <input type="text" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="Caller Name">
+            <input type="tel" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="Phone Number">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Emergency Location</label>
+          <input type="text" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="E.g. Maka Al-Mukarama Road, near Hotel">
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+          <label style="display: block; margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Emergency Details / Priority</label>
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+            <input type="text" style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main);" required placeholder="Nature of emergency (e.g. Heart Attack)">
+            <select style="width: 100%; padding: 0.85rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--danger); font-weight: 700;">
+              <option value="1">LEVEL 1 (Critical)</option>
+              <option value="2">LEVEL 2 (Urgent)</option>
+              <option value="3">LEVEL 3 (Standard)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; background: var(--danger); font-size: 1.1rem; padding: 1rem;"><i class="fa-solid fa-truck-fast"></i> DISPATCH AMB-02 NOW</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

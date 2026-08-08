@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClinicCare — Nidaamka Ballanqaadyada Rugta</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #071a17;
+    --teal: #0d3b30;
+    --mid: #145c47;
+    --accent: #1d9e75;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --cream: #f5f0e8;
+    --cream2: #ede6d6;
+    --white: #ffffff;
+    --text-muted: rgba(245,240,232,0.55);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--deep);
+    color: var(--cream);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 4rem;
+    backdrop-filter: blur(20px);
+    background: rgba(7,26,23,0.7);
+    border-bottom: 1px solid rgba(201,168,76,0.12);
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--white);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); display: inline-block;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.82rem; font-weight: 400; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold-light); }
+  .nav-cta {
+    background: var(--gold); color: var(--deep);
+    border: none; padding: 0.6rem 1.5rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    letter-spacing: 0.05em; cursor: pointer; border-radius: 2px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 7rem 4rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 80% at 70% 50%, rgba(13,59,48,0.9) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 80%, rgba(29,158,117,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-grid-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift { from { background-position: 0 0; } to { background-position: 60px 60px; } }
+
+  .hero-left { position: relative; z-index: 2; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; font-weight: 400; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 28px; height: 1px; background: var(--gold);
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 5.5vw, 5rem);
+    font-weight: 300; line-height: 1.08;
+    color: var(--white); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--gold-light); }
+  .hero-sub {
+    font-size: 1rem; font-weight: 300; line-height: 1.75;
+    color: var(--text-muted); max-width: 440px; margin-bottom: 2.5rem;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 1rem; align-items: center;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .btn-primary {
+    background: var(--gold); color: var(--deep);
+    padding: 0.9rem 2rem; border: none; border-radius: 2px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block;
+    letter-spacing: 0.04em;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.25); }
+  .btn-ghost {
+    color: var(--cream); border: 1px solid rgba(245,240,232,0.25);
+    padding: 0.9rem 2rem; border-radius: 2px;
+    font-size: 0.88rem; font-weight: 400; cursor: pointer;
+    background: transparent; transition: all 0.2s; text-decoration: none; display: inline-block;
+    letter-spacing: 0.04em;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .hero-stats {
+    display: flex; gap: 2.5rem; margin-top: 3.5rem;
+    padding-top: 2rem; border-top: 1px solid rgba(245,240,232,0.1);
+    opacity: 0; animation: fadeUp 0.8s 1s forwards;
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem; font-weight: 300; color: var(--gold-light);
+  }
+  .stat-lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+  .hero-right {
+    position: relative; z-index: 2;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; animation: fadeIn 1.2s 0.5s forwards;
+  }
+  .phone-mock {
+    width: 280px; height: 560px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 36px; position: relative; overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  .phone-screen {
+    position: absolute; inset: 16px;
+    background: linear-gradient(160deg, #0d3b30 0%, #071a17 100%);
+    border-radius: 24px; padding: 20px 16px; overflow: hidden;
+  }
+  .phone-notch {
+    width: 80px; height: 24px; background: rgba(7,26,23,0.9);
+    border-radius: 12px; margin: 0 auto 16px;
+  }
+  .phone-card {
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 14px; padding: 14px; margin-bottom: 10px;
+  }
+  .phone-card-title { font-size: 10px; color: var(--gold); margin-bottom: 6px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .phone-card-name { font-size: 14px; color: var(--white); font-weight: 500; }
+  .phone-card-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .phone-bar { display: flex; gap: 6px; margin-top: 8px; }
+  .phone-pill {
+    padding: 4px 10px; border-radius: 20px; font-size: 9px;
+    background: rgba(29,158,117,0.2); color: #5dcaa5; border: 1px solid rgba(29,158,117,0.3);
+  }
+  .phone-pill.gold { background: rgba(201,168,76,0.15); color: var(--gold-light); border-color: rgba(201,168,76,0.3); }
+  .phone-list { margin-top: 10px; }
+  .phone-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .phone-row:last-child { border-bottom: none; }
+  .phone-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--mid); display: flex; align-items: center;
+    justify-content: center; font-size: 10px; color: var(--gold-light); font-weight: 500;
+  }
+  .phone-info { flex: 1; margin-left: 8px; }
+  .phone-pname { font-size: 11px; color: var(--cream); }
+  .phone-ptime { font-size: 10px; color: var(--text-muted); }
+  .phone-status {
+    width: 7px; height: 7px; border-radius: 50%; background: #5dcaa5;
+  }
+  .phone-status.waiting { background: var(--gold); }
+  .floating-badge {
+    position: absolute; right: -20px; top: 120px;
+    background: var(--gold); color: var(--deep);
+    padding: 10px 14px; border-radius: 12px;
+    font-size: 11px; font-weight: 500;
+    box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+    animation: float 3s ease-in-out infinite;
+  }
+  .floating-badge2 {
+    position: absolute; left: -30px; bottom: 160px;
+    background: rgba(13,59,48,0.95); border: 1px solid rgba(201,168,76,0.2);
+    color: var(--cream); padding: 10px 14px; border-radius: 12px;
+    font-size: 11px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    animation: float 3s ease-in-out 1.5s infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  /* ── SECTION BASE ── */
+  section { padding: 6rem 4rem; }
+  .section-label {
+    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 300;
+    line-height: 1.15; color: var(--white);
+  }
+  .section-title em { font-style: italic; color: var(--gold-light); }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    background: var(--teal);
+    border-top: 1px solid rgba(201,168,76,0.1);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+  .how-grid {
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 5rem; align-items: start; margin-top: 4rem;
+  }
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step {
+    display: flex; gap: 1.5rem; padding: 1.8rem 0;
+    border-bottom: 1px solid rgba(245,240,232,0.08);
+    cursor: pointer; transition: all 0.2s;
+    position: relative;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem; font-weight: 300; color: rgba(201,168,76,0.2);
+    line-height: 1; min-width: 50px; transition: color 0.2s;
+  }
+  .step.active .step-num { color: var(--gold); }
+  .step-body { flex: 1; }
+  .step-title { font-size: 0.95rem; font-weight: 500; color: var(--cream); margin-bottom: 6px; }
+  .step.active .step-title { color: var(--gold-light); }
+  .step-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.6; display: none; }
+  .step.active .step-desc { display: block; }
+  .step-bar {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: var(--gold); transform: scaleY(0); transform-origin: top;
+    transition: transform 0.3s;
+  }
+  .step.active .step-bar { transform: scaleY(1); }
+
+  .step-visual {
+    background: rgba(7,26,23,0.6); border: 1px solid rgba(201,168,76,0.12);
+    border-radius: 20px; padding: 2.5rem; min-height: 360px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .step-visual::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.08);
+  }
+  .visual-icon {
+    font-size: 3rem; margin-bottom: 1.5rem;
+    background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.2);
+    width: 72px; height: 72px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .visual-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem; color: var(--white); margin-bottom: 0.5rem;
+  }
+  .visual-sub { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ── FEATURES ── */
+  .features { background: var(--deep); }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px; margin-top: 4rem;
+    border: 1.5px solid rgba(201,168,76,0.1);
+    border-radius: 16px; overflow: hidden;
+  }
+  .feat {
+    padding: 2.5rem; background: var(--teal);
+    transition: background 0.25s;
+    position: relative; overflow: hidden;
+  }
+  .feat::after {
+    content: ''; position: absolute;
+    bottom: -60px; right: -60px;
+    width: 140px; height: 140px; border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.06);
+    transition: transform 0.3s;
+  }
+  .feat:hover { background: rgba(13,59,48,0.95); }
+  .feat:hover::after { transform: scale(1.4); }
+  .feat-icon {
+    font-size: 1.8rem; margin-bottom: 1.5rem;
+    width: 52px; height: 52px;
+    background: rgba(201,168,76,0.1); border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+  .feat-title { font-size: 0.97rem; font-weight: 500; color: var(--white); margin-bottom: 8px; }
+  .feat-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+
+  /* ── DOCTORS ── */
+  .doctors { background: var(--teal); }
+  .doctors-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem; margin-top: 4rem;
+  }
+  .doctor-card {
+    background: rgba(7,26,23,0.5); border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 16px; overflow: hidden; transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .doctor-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+  .doctor-img {
+    height: 220px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, var(--mid) 0%, var(--deep) 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .doctor-avatar {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(201,168,76,0.15); border: 2px solid rgba(201,168,76,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold-light);
+  }
+  .doctor-specialty {
+    position: absolute; bottom: 12px; left: 12px;
+    background: var(--gold); color: var(--deep);
+    font-size: 0.7rem; font-weight: 500; padding: 4px 10px;
+    border-radius: 20px; letter-spacing: 0.05em;
+  }
+  .doctor-info { padding: 1.4rem; }
+  .doctor-name { font-size: 1rem; font-weight: 500; color: var(--white); margin-bottom: 4px; }
+  .doctor-sub { font-size: 0.8rem; color: var(--text-muted); }
+  .doctor-avail {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 12px; font-size: 0.78rem; color: #5dcaa5;
+  }
+  .avail-dot { width: 6px; height: 6px; border-radius: 50%; background: #5dcaa5; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── TESTIMONIAL ── */
+  .testimonial {
+    background: var(--deep); text-align: center; padding: 7rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .testimonial::before {
+    content: '\201C';
+    font-family: 'Cormorant Garamond', serif; font-size: 20rem;
+    color: rgba(201,168,76,0.04); position: absolute;
+    top: -2rem; left: 50%; transform: translateX(-50%);
+    line-height: 1; pointer-events: none;
+  }
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 300;
+    font-style: italic; color: var(--cream); max-width: 760px;
+    margin: 0 auto 2rem; line-height: 1.4; position: relative;
+  }
+  .testimonial-author { font-size: 0.82rem; color: var(--gold); letter-spacing: 0.1em; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--gold); padding: 5rem 4rem; text-align: center;
+  }
+  .cta-section .section-label { color: rgba(7,26,23,0.6); justify-content: center; }
+  .cta-section .section-label::before { background: rgba(7,26,23,0.4); }
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 300;
+    color: var(--deep); margin: 0.5rem 0 1.5rem; line-height: 1.1;
+  }
+  .cta-sub { font-size: 1rem; color: rgba(7,26,23,0.65); margin-bottom: 2.5rem; }
+  .btn-dark {
+    background: var(--deep); color: var(--gold);
+    padding: 1rem 2.5rem; border: none; border-radius: 2px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.04em;
+    text-decoration: none; display: inline-block;
+  }
+  .btn-dark:hover { background: var(--teal); color: var(--gold-light); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(7,26,23,0.3); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #030f0c; padding: 3rem 4rem 2rem;
+    border-top: 1px solid rgba(201,168,76,0.08);
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 4rem; margin-bottom: 3rem;
+  }
+  .footer-brand .logo { margin-bottom: 1rem; }
+  .footer-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
+  .footer-col-title { font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+  .footer-links a { font-size: 0.82rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold-light); }
+  .footer-bottom {
+    padding-top: 2rem; border-top: 1px solid rgba(245,240,232,0.06);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-bottom p { font-size: 0.78rem; color: rgba(245,240,232,0.25); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* Scroll bar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--deep); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <span class="logo-dot"></span> ClinicCare
+  </div>
+  <ul class="nav-links">
+    <li><a href="#how">Sida u shaqaysa</a></li>
+    <li><a href="#features">Astaamaha</a></li>
+    <li><a href="#doctors">Dhakhtarada</a></li>
+    <li><a href="#contact">Xiriir</a></li>
+  </ul>
+  <button class="nav-cta">Bilow Hadda</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">Nidaamka Ballanqaadyada Casriga ah</div>
+    <h1 class="hero-title">
+      Rugta waxaad<br>
+      <em>si fudud</em> ugu<br>
+      maamuleysa
+    </h1>
+    <p class="hero-sub">
+      Nidaam dhijitaal ah oo bukaanada sugitaanka hoos u dhiga, faylasha degdeg u helo, 
+      ballanqaadyadana si abaabulan u maareeya — rugta oo dhan hal meel.
+    </p>
+    <div class="hero-actions">
+      <a href="#how" class="btn-primary">Bilow Bilaash</a>
+      <a href="#features" class="btn-ghost">Wax Badan Ogow →</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">85%</div>
+        <div class="stat-lbl">Hoos u dhac sugitaanka</div>
+      </div>
+      <div>
+        <div class="stat-num">5s</div>
+        <div class="stat-lbl">Raadinta faylka</div>
+      </div>
+      <div>
+        <div class="stat-num">100%</div>
+        <div class="stat-lbl">Dhijitaal & Nidaaman</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone-mock">
+      <div class="phone-screen">
+        <div class="phone-notch"></div>
+        <div class="phone-card">
+          <div class="phone-card-title">Jadwalka Maanta</div>
+          <div class="phone-card-name">Isniinta, 6 May 2026</div>
+          <div class="phone-card-sub">Xarunta Caafimaadka Hargeysa</div>
+          <div class="phone-bar">
+            <span class="phone-pill">18 bukaanood</span>
+            <span class="phone-pill gold">2 dhibaato</span>
+          </div>
+        </div>
+        <div class="phone-list">
+          <div class="phone-row">
+            <div class="phone-avatar">FA</div>
+            <div class="phone-info">
+              <div class="phone-pname">Fadumo Ali</div>
+              <div class="phone-ptime">09:00 · Dr. Cabdi</div>
+            </div>
+            <div class="phone-status"></div>
+          </div>
+          <div class="phone-row">
+            <div class="phone-avatar">MH</div>
+            <div class="phone-info">
+              <div class="phone-pname">Maxamed Hassan</div>
+              <div class="phone-ptime">09:30 · Dr. Asad</div>
+            </div>
+            <div class="phone-status waiting"></div>
+          </div>
+          <div class="phone-row">
+            <div class="phone-avatar">ZA</div>
+            <div class="phone-info">
+              <div class="phone-pname">Zahra Axmed</div>
+              <div class="phone-ptime">10:00 · Dr. Cabdi</div>
+            </div>
+            <div class="phone-status"></div>
+          </div>
+          <div class="phone-row">
+            <div class="phone-avatar">CJ</div>
+            <div class="phone-info">
+              <div class="phone-pname">Caali Jama</div>
+              <div class="phone-ptime">10:30 · Dr. Asad</div>
+            </div>
+            <div class="phone-status waiting"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="floating-badge">✓ Bukaanka la arkay</div>
+    <div class="floating-badge2">⏱ Sugitaan: 12 daqiiqo</div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">Habka Shaqada</div>
+  <h2 class="section-title">Sida nidaamku<br><em>u shaqeeyo</em></h2>
+  <div class="how-grid reveal">
+    <div class="steps">
+      <div class="step active" onclick="activateStep(this, 0)">
+        <div class="step-bar"></div>
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <div class="step-title">Diiwaangelinta Bukaanka</div>
+          <div class="step-desc">Shaqaalaha qaabilka waxay geliyaan macluumaadka bukaanka cusub — magac, aqoonsi, xiriir, iyo taariikh caafimaadeed — hal mar. Bukaanka soo noqnoqda way si degdeg ah u helaan.</div>
+        </div>
+      </div>
+      <div class="step" onclick="activateStep(this, 1)">
+        <div class="step-bar"></div>
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <div class="step-title">Ballansasho & Jadwal</div>
+          <div class="step-desc">Xulo dhakhtarka, taariikhda, iyo wakhtiga — nidaamku si toos ah ayuu u xaqiijiyaa inuusan halkan lahayn bukaankale. Khilaafka ballanqaadka ma dhici karo.</div>
+        </div>
+      </div>
+      <div class="step" onclick="activateStep(this, 2)">
+        <div class="step-bar"></div>
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <div class="step-title">Maareynta Safafka</div>
+          <div class="step-desc">Meja qaabilka ayaa muujiya bukaanka xiga iyo wakhtiga sugitaanka la filayo. Maamuluhu waa arki karaa xaaladda rugta oo dhan hal shaashadood.</div>
+        </div>
+      </div>
+      <div class="step" onclick="activateStep(this, 3)">
+        <div class="step-bar"></div>
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <div class="step-title">Warbixinta & Falanqaynta</div>
+          <div class="step-desc">Warbixinno maalinle, toddobaadleye, iyo bileedba waxay muujiyaan tirada bukaanka, wakhtiga sugitaanka celceliska ah, iyo xaaladda guud ee rugta.</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-visual" id="stepVisual">
+      <div class="visual-icon" id="vIcon">📋</div>
+      <div class="visual-title" id="vTitle">Diiwaangelinta Bukaanka</div>
+      <div class="visual-sub" id="vSub">Geli macluumaadka bukaanka si degdeg ah. Waa la raadin karaa gudaha 5 ilbiriqsi marka ay ku soo laabataan.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Astaamaha</div>
+  <h2 class="section-title">Wax kasta oo aad<br><em>u baahan tahay</em></h2>
+  <div class="features-grid reveal">
+    <div class="feat">
+      <div class="feat-icon">🔍</div>
+      <div class="feat-title">Raadinta Degdega</div>
+      <div class="feat-desc">Hel faylka bukaanka kasta gudaha 5 ilbiriqsi magaciisa ama lambarka aqoonsigaas ah. La nabad gal warqadaha iyo raadinta gacanta.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📅</div>
+      <div class="feat-title">Jadwalka Casriga</div>
+      <div class="feat-desc">Nidaam ballanqaadyo oo buuxda oo leh ogaanshaha is-burintu, liiska sugitaanka, iyo aragtida kalandarka maalinlaha.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">👨‍⚕️</div>
+      <div class="feat-title">Maaraynta Dhakhtarada</div>
+      <div class="feat-desc">Qeex jadwalka dhakhtarka, sharafaha, iyo tirada bukaanka ee maalinle. Wax walba si toos ah ayaa u la xiriira.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Warbixinta Tooska</div>
+      <div class="feat-desc">Maamuluhu waxuu arki karaa tirooyinka muhiimka ah — bukaanka maanta, wakhtiga sugitaanka, dhakhtarada ugu mashquulka badan.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">📱</div>
+      <div class="feat-title">Qaabab Kala Duwan</div>
+      <div class="feat-desc">Desktop, tablet, ama mobile — nidaamku waa la isticmaali karaa qalab kasta. Xitaa offline ayuu shaqeeyaa korontada la'aanteed.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-icon">🔒</div>
+      <div class="feat-title">Amniga Xogta</div>
+      <div class="feat-desc">Xogta bukaanka waa sir. Kaliya shaqaalaha ogolaanshaha leh ayaa arki kara. Waxwalba waa la kaydiyaa si nabadgalyo ah.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOCTORS -->
+<section class="doctors" id="doctors">
+  <div class="section-label">Kooxda Dhakhtarada</div>
+  <h2 class="section-title">Dhakhtaradayada<br><em>khibradda leh</em></h2>
+  <div class="doctors-grid reveal">
+    <div class="doctor-card">
+      <div class="doctor-img">
+        <div class="doctor-avatar">CA</div>
+        <span class="doctor-specialty">Caafimaadka Guud</span>
+      </div>
+      <div class="doctor-info">
+        <div class="doctor-name">Dr. Cabdi Axmed Warsame</div>
+        <div class="doctor-sub">12 sano khibrad · MBBS, MD</div>
+        <div class="doctor-avail">
+          <div class="avail-dot"></div> Hadda Diyaar
+        </div>
+      </div>
+    </div>
+    <div class="doctor-card">
+      <div class="doctor-img">
+        <div class="doctor-avatar">AS</div>
+        <span class="doctor-specialty">Carruurta</span>
+      </div>
+      <div class="doctor-info">
+        <div class="doctor-name">Dr. Asad Maxamed Jama</div>
+        <div class="doctor-sub">8 sano khibrad · MBBS, Paediatrics</div>
+        <div class="doctor-avail">
+          <div class="avail-dot"></div> Hadda Diyaar
+        </div>
+      </div>
+    </div>
+    <div class="doctor-card">
+      <div class="doctor-img">
+        <div class="doctor-avatar">HN</div>
+        <span class="doctor-specialty">Dumarku & Caruurka</span>
+      </div>
+      <div class="doctor-info">
+        <div class="doctor-name">Dr. Hodan Nuur Cali</div>
+        <div class="doctor-sub">10 sano khibrad · MBBS, OB-GYN</div>
+        <div class="doctor-avail">
+          <div class="avail-dot"></div> Hadda Diyaar
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<div class="testimonial reveal">
+  <p class="testimonial-text">
+    "Ka hor nidaamkan, maalin walba waxaan qaadanay 20 daqiiqo oo keliya raadinta faylasha. Hadda, waxaan helaa macluumaadka bukaanka gudaha ilbiriqsi. Shaqada waa fududaatay aad."
+  </p>
+  <p class="testimonial-author">BarwaaQo Dahir Nuur — Shaqaalaha Qaabilka, Xarunta Caafimaadka Hargeysa</p>
+</div>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="section-label">Bilow Maanta</div>
+  <h2 class="cta-title">Talaabo koowaad<br>waa bilaash</h2>
+  <p class="cta-sub">Ku biir rugaha kale ee Hargeysa oo nidaamkan isticmaala. Wax lacag ah looma baahna bilaabidda.</p>
+  <a href="#" class="btn-dark">Codso Demo Bilaash →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo"><span class="logo-dot"></span> ClinicCare</div>
+      <p class="footer-desc">Nidaamka ballanqaadyada ee casriga ah ee loogu talagalay rugaha Soomaaliyeed. Fudud, xasaasi, oo shaqeeya.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Nidaamka</div>
+      <ul class="footer-links">
+        <li><a href="#">Astaamaha</a></li>
+        <li><a href="#">Qiimaha</a></li>
+        <li><a href="#">Dukumiintiyo</a></li>
+        <li><a href="#">Cusboonaysiinta</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Rugta</div>
+      <ul class="footer-links">
+        <li><a href="#">Nagu saabsan</a></li>
+        <li><a href="#">Kooxda</a></li>
+        <li><a href="#">Shaqooyin</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Xiriir</div>
+      <ul class="footer-links">
+        <li><a href="#">Hargeysa, Somaliland</a></li>
+        <li><a href="#">info@cliniccare.so</a></li>
+        <li><a href="#">+252 63 000 0000</a></li>
+        <li><a href="#">Taageerada 24/7</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ClinicCare. Xuquuqda oo dhan way xafidan yihiin.</p>
+    <p>Koox 2 · Mashruuca Falanqaynta Nidaamka</p>
+  </div>
+</footer>
+
+<script>
+  // Step switcher
+  const visuals = [
+    { icon: '📋', title: 'Diiwaangelinta Bukaanka', sub: 'Geli macluumaadka bukaanka si degdeg ah. Waa la raadin karaa gudaha 5 ilbiriqsi marka ay ku soo laabataan.' },
+    { icon: '📅', title: 'Ballansasho & Jadwal', sub: 'Xulo dhakhtarka iyo wakhtiga. Nidaamku si toos ah ayuu u xaqiijiyaa inuusan khilaafka lahayn.' },
+    { icon: '👥', title: 'Maareynta Safafka', sub: 'Daawashada bukaanka xiga iyo wakhtiga sugitaanka. Maamuluhu waa arki karaa xaaladda oo dhan.' },
+    { icon: '📊', title: 'Warbixinta & Falanqaynta', sub: 'Warbixinno toos ah oo muujinaysa tirada bukaanka, wakhtiga sugitaanka, iyo xaaladda rugta.' }
+  ];
+  function activateStep(el, idx) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('vIcon').textContent = visuals[idx].icon;
+    document.getElementById('vTitle').textContent = visuals[idx].title;
+    document.getElementById('vSub').textContent = visuals[idx].sub;
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Auto-cycle steps
+  let curr = 0;
+  setInterval(() => {
+    curr = (curr + 1) % 4;
+    const steps = document.querySelectorAll('.step');
+    activateStep(steps[curr], curr);
+  }, 3000);
+</script>
+</body>
+</html>

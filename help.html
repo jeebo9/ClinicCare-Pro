@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Help & Support | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    .help-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .help-card { background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; transition: all 0.3s; text-align: center; }
+    .help-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+    .help-card i.big-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .help-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .help-card p { font-size: 0.9rem; color: var(--text-muted); }
+    .faq-item { background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 0.75rem; overflow: hidden; transition: all 0.3s; }
+    .faq-item:hover { border-color: var(--primary); }
+    .faq-question { padding: 1.25rem 1.5rem; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+    .faq-question:hover { background: var(--surface-lighter); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0 1.5rem; color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 1.5rem 1.25rem; }
+    .faq-item.open .faq-question i { transform: rotate(180deg); }
+    .faq-question i { transition: transform 0.3s; color: var(--primary); }
+    .sys-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .sys-info-item { background: var(--surface-lighter); border-radius: var(--radius-md); padding: 1.25rem; text-align: center; }
+    .sys-info-item .val { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-bottom: 0.25rem; }
+    .sys-info-item .lbl { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .shortcut-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.75rem; }
+    .shortcut-item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-md); background: var(--surface-lighter); }
+    .shortcut-item kbd { background: var(--surface-dark); border: 1px solid var(--border); padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; font-family: monospace; }
+    .contact-form input, .contact-form textarea { width: 100%; padding: 0.85rem 1rem; background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.95rem; outline: none; margin-bottom: 1rem; font-family: inherit; }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: var(--primary); }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand"><i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span></div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+      <li class="nav-item"><a href="help.html" class="active"><i class="fa-solid fa-circle-question"></i> <span data-i18n="help_support">Help & Support</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;" data-i18n="help_support">Help & Support</h1>
+        <p class="text-muted" data-i18n="help_desc">Documentation, FAQs, and system information</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <div class="lang-switcher">
+          <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-light); color: var(--text-main); font-weight: 600; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+        <div class="user-status-pill">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" data-i18n="clinic_manager">Clinic Manager</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <!-- Quick Help Cards -->
+      <div class="help-grid">
+        <div class="help-card slide-in" style="animation-delay:0.1s;">
+          <i class="fa-solid fa-book big-icon" style="color: var(--primary);"></i>
+          <h3 data-i18n="user_guide">User Guide</h3>
+          <p data-i18n="user_guide_desc">Step-by-step documentation for all modules</p>
+          <button class="btn btn-outline" style="margin-top: 1rem;" onclick="showToast('User Guide PDF downloading...', 'success')"><i class="fa-solid fa-download"></i> <span data-i18n="download">Download</span></button>
+        </div>
+        <div class="help-card slide-in" style="animation-delay:0.15s;">
+          <i class="fa-solid fa-video big-icon" style="color: var(--success);"></i>
+          <h3 data-i18n="video_tutorials">Video Tutorials</h3>
+          <p data-i18n="video_tutorials_desc">Watch how-to videos for common tasks</p>
+          <button class="btn btn-outline" style="margin-top: 1rem;" onclick="showToast('Video library coming soon!', 'success')"><i class="fa-solid fa-play"></i> <span data-i18n="watch_now">Watch</span></button>
+        </div>
+        <div class="help-card slide-in" style="animation-delay:0.2s;">
+          <i class="fa-solid fa-headset big-icon" style="color: var(--warning);"></i>
+          <h3 data-i18n="contact_support">Contact Support</h3>
+          <p data-i18n="contact_support_desc">Get help from our technical team 24/7</p>
+          <button class="btn btn-primary" style="margin-top: 1rem;" onclick="document.getElementById('contact-section').scrollIntoView({behavior:'smooth'})"><i class="fa-solid fa-envelope"></i> <span data-i18n="contact_us">Contact</span></button>
+        </div>
+      </div>
+
+      <!-- System Info -->
+      <div style="background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;" class="slide-in" style="animation-delay:0.25s;">
+        <h3 style="font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-server" style="color: var(--primary);"></i> <span data-i18n="system_information">System Information</span></h3>
+        <div class="sys-info-grid">
+          <div class="sys-info-item"><div class="val">v4.5</div><div class="lbl" data-i18n="version">Version</div></div>
+          <div class="sys-info-item"><div class="val">Node.js</div><div class="lbl" data-i18n="backend">Backend</div></div>
+          <div class="sys-info-item"><div class="val">JSON DB</div><div class="lbl" data-i18n="database_type">Database</div></div>
+          <div class="sys-info-item"><div class="val">256-Bit</div><div class="lbl" data-i18n="encryption">Encryption</div></div>
+          <div class="sys-info-item"><div class="val" style="color: var(--success);">Online</div><div class="lbl" data-i18n="server_status">Server Status</div></div>
+          <div class="sys-info-item"><div class="val">3</div><div class="lbl" data-i18n="languages_supported">Languages</div></div>
+        </div>
+      </div>
+
+      <!-- FAQ -->
+      <div style="background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;" class="slide-in">
+        <h3 style="font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-circle-question" style="color: var(--accent);"></i> <span data-i18n="faq">Frequently Asked Questions</span></h3>
+        
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question"><span data-i18n="faq_q1">How do I register a new patient?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-answer" data-i18n="faq_a1">Navigate to <strong>Patients Management</strong> and click the <strong>"Register New Patient"</strong> button. Fill in the required details including name, phone, age, and gender. Click Submit to save the patient record.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question"><span data-i18n="faq_q2">How do I book an appointment?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-answer" data-i18n="faq_a2">Go to the <strong>Appointments</strong> page and click <strong>"Book Appointment"</strong>. Select a registered patient, choose a doctor, and pick a date and time. The appointment will appear in the queue.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question"><span data-i18n="faq_q3">How do I create an invoice?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-answer" data-i18n="faq_a3">Visit <strong>Billing & Finance</strong> and click <strong>"Create New Invoice"</strong>. Select the patient, enter the service details, amount, and payment method. The invoice will be generated instantly.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question"><span data-i18n="faq_q4">How do I change the system language?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-answer" data-i18n="faq_a4">Use the language dropdown in the top header of any page. You can choose between English, Somali, and Arabic. The system supports full RTL (Right-to-Left) layout for Arabic.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-question"><span data-i18n="faq_q5">Is my data secure?</span><i class="fa-solid fa-chevron-down"></i></div>
+          <div class="faq-answer" data-i18n="faq_a5">Yes. ClinicCare Pro uses 256-bit encryption, two-factor authentication (2FA via SMS), and Face ID verification. All sessions are monitored through the Audit Logs module.</div>
+        </div>
+      </div>
+
+      <!-- Keyboard Shortcuts -->
+      <div style="background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem;" class="slide-in">
+        <h3 style="font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-keyboard" style="color: var(--warning);"></i> <span data-i18n="keyboard_shortcuts">Keyboard Shortcuts</span></h3>
+        <div class="shortcut-grid">
+          <div class="shortcut-item"><kbd>Ctrl + D</kbd> <span data-i18n="go_dashboard">Go to Dashboard</span></div>
+          <div class="shortcut-item"><kbd>Ctrl + P</kbd> <span data-i18n="go_patients">Go to Patients</span></div>
+          <div class="shortcut-item"><kbd>Ctrl + B</kbd> <span data-i18n="go_billing">Go to Billing</span></div>
+          <div class="shortcut-item"><kbd>Ctrl + L</kbd> <span data-i18n="go_lab">Go to Laboratory</span></div>
+          <div class="shortcut-item"><kbd>Ctrl + /</kbd> <span data-i18n="search_focus">Focus Search</span></div>
+          <div class="shortcut-item"><kbd>Esc</kbd> <span data-i18n="close_modal">Close Modal</span></div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div id="contact-section" style="background: var(--surface-dark); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem;" class="slide-in">
+        <h3 style="font-weight: 700; margin-bottom: 1.5rem;"><i class="fa-solid fa-paper-plane" style="color: var(--primary);"></i> <span data-i18n="send_message">Send a Message</span></h3>
+        <form class="contact-form" onsubmit="event.preventDefault(); showToast('Message sent to support team!', 'success'); this.reset();">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <input type="text" placeholder="Your Name" required>
+            <input type="email" placeholder="Your Email" required>
+          </div>
+          <input type="text" placeholder="Subject" required>
+          <textarea rows="4" placeholder="Describe your issue..." required></textarea>
+          <button type="submit" class="btn btn-primary" style="width: 100%;"><i class="fa-solid fa-paper-plane"></i> <span data-i18n="send_message">Send Message</span></button>
+        </form>
+      </div>
+
+      <!-- AI Expanded Q&A Mode -->
+      <div id="ai-expanded-section" style="background: linear-gradient(180deg, rgba(59,130,246,0.04), transparent); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-top:1.25rem;" class="slide-in">
+        <h3 style="font-weight:700;margin-bottom:0.75rem;"><i class="fa-solid fa-robot" style="color:var(--primary);"></i> Expanded Q&A Mode</h3>
+        <p style="color:var(--text-muted);margin-bottom:1rem;">Enable Expanded Q&amp;A mode to allow longer AI conversation history (up to 100 question/answer pairs). Use only under clinician oversight — this mode may provide more detailed guidance but does not replace professional medical advice.</p>
+        <div style="display:flex;gap:1rem;align-items:center;margin-bottom:0.75rem;">
+          <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+            <input type="checkbox" id="ai-expanded-toggle"> <strong>Enable Expanded Q&amp;A (100 pairs)</strong>
+          </label>
+          <button class="btn btn-outline" id="ai-clear-history">Clear AI History</button>
+          <button class="btn btn-outline" id="ai-export-history">Export History</button>
+        </div>
+        <div style="font-size:0.9rem;color:var(--text-muted);">When enabled, the AI will retain up to 100 recent question/answer pairs in browser storage to improve context. All data is stored locally in your browser.</div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

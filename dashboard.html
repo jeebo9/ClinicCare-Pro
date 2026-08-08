@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClinicCare Pro | Dashboard</title>
+  <meta name="description" content="ClinicCare Pro Admin Dashboard - Real-time clinic analytics, patient queue, and activity feed.">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    .gradient-card-blue  { background: linear-gradient(135deg, #4338ca, #6366f1); color: white; }
+    .gradient-card-green { background: linear-gradient(135deg, #059669, #10b981); color: white; }
+    .gradient-card-amber { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; }
+    .gradient-card-red   { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; }
+
+    .stat-card-new {
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .stat-card-new:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    .stat-card-new .icon-bg {
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      font-size: 5rem;
+      opacity: 0.12;
+    }
+    .stat-card-new .val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      line-height: 1;
+      margin: 0.5rem 0;
+    }
+    .stat-card-new .lbl {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+    .stat-card-new .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 0.75rem;
+    }
+
+    .chart-card {
+      background: var(--surface-main);
+      backdrop-filter: var(--glass-blur);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title i { color: var(--primary); }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; }
+
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
+
+    .quick-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: var(--surface-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    .quick-action-btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .quick-action-btn i { color: var(--primary); width: 20px; text-align: center; }
+
+    /* Mini progress bars */
+    .progress-bar-wrap {
+      background: rgba(0,0,0,0.08);
+      border-radius: 999px;
+      height: 6px;
+      margin-top: 0.5rem;
+    }
+    .progress-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.5);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i>
+      <span data-i18n="brand_name">CLINICCARE</span>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html" class="active"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i><span>Patients</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i><span>Billing</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i><span>Pharmacy</span></a></li>
+      <div class="nav-section-label">Clinical</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i><span>Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i><span>Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i><span>Emergency</span></a></li>
+      <li class="nav-item"><a href="telemedicine.html"><i class="fa-solid fa-video"></i><span>Telemedicine</span></a></li>
+      <div class="nav-section-label">Admin</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i><span>Users</span></a></li>
+      <li class="nav-item"><a href="reports.html"><i class="fa-solid fa-chart-bar"></i><span>Reports</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style:none;">
+        <a href="login.html" style="color:var(--danger);">
+          <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+        </a>
+      </li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-0.5px;">
+          Good Morning, <span style="color:var(--primary);" id="sidebar-user-name">Mahad Ali</span> 👋
+        </h1>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-top:0.2rem;">
+          <span id="current-date"></span> &bull; Today's overview
+        </p>
+      </div>
+      <div class="header-actions">
+        <!-- Lang Switcher -->
+        <select onchange="i18n && i18n.setLanguage(this.value)" style="padding:0.5rem 1rem;border-radius:999px;border:1px solid var(--border);background:var(--surface-main);color:var(--text-main);font-weight:600;font-size:0.85rem;cursor:pointer;backdrop-filter:blur(12px);">
+          <option value="en">EN</option>
+          <option value="so">SO</option>
+          <option value="ar">AR</option>
+        </select>
+        <!-- Notifications -->
+        <div class="notification-bell" id="notif-bell">
+          <i class="fa-solid fa-bell"></i>
+          <div class="notification-badge"></div>
+        </div>
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="theme-toggle-btn" title="Toggle Dark Mode">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <!-- User -->
+        <div class="user-status-pill">
+          <div class="user-avatar">MA</div>
+          <div class="user-info">
+            <span class="user-name" id="hdr-user-name">Mahad Ali</span>
+            <span class="user-role">Clinic Manager</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid" style="margin-bottom:2rem;">
+      <div class="stat-card-new gradient-card-blue slide-in" style="animation-delay:0.1s;">
+        <div class="icon-bg"><i class="fa-solid fa-users"></i></div>
+        <div class="lbl">Total Patients</div>
+        <div class="val" id="stats-total-patients">1,248</div>
+        <span class="trend"><i class="fa-solid fa-arrow-trend-up"></i> 12% this month</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:72%;"></div></div>
+      </div>
+
+      <div class="stat-card-new gradient-card-green slide-in" style="animation-delay:0.2s;">
+        <div class="icon-bg"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="lbl">Today's Appointments</div>
+        <div class="val" id="stats-today-appointments">42</div>
+        <span class="trend"><i class="fa-solid fa-calendar-day"></i> Scheduled today</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:60%;"></div></div>
+      </div>
+
+      <div class="stat-card-new gradient-card-amber slide-in" style="animation-delay:0.3s;">
+        <div class="icon-bg"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="lbl">In Queue</div>
+        <div class="val">8</div>
+        <span class="trend"><i class="fa-solid fa-clock"></i> Waiting now</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:35%;"></div></div>
+      </div>
+
+      <div class="stat-card-new gradient-card-red slide-in" style="animation-delay:0.4s;">
+        <div class="icon-bg"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+        <div class="lbl">Monthly Revenue</div>
+        <div class="val">$5.2K</div>
+        <span class="trend"><i class="fa-solid fa-arrow-trend-up"></i> 8% growth</span>
+        <div class="progress-bar-wrap"><div class="progress-bar" style="width:80%;"></div></div>
+      </div>
+    </div>
+
+    <!-- Chart + Activity Feed -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+      <!-- Chart -->
+      <div class="chart-card slide-in" style="animation-delay:0.5s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+          <div class="card-title" style="margin-bottom:0;">
+            <i class="fa-solid fa-chart-line"></i> Weekly Patient Analytics
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="btn btn-outline" style="padding:0.4rem 0.9rem;font-size:0.8rem;">Week</button>
+            <button class="btn btn-primary" style="padding:0.4rem 0.9rem;font-size:0.8rem;">Month</button>
+          </div>
+        </div>
+        <div style="height:280px;"><canvas id="patientAnalyticsChart"></canvas></div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div class="chart-card slide-in" style="animation-delay:0.6s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div class="card-title" style="margin-bottom:0;">
+            <i class="fa-solid fa-bolt" style="color:var(--warning);"></i> Recent Activity
+          </div>
+          <a href="audit.html" style="font-size:0.8rem;color:var(--primary);text-decoration:none;font-weight:600;">View All</a>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(16,185,129,0.12);color:var(--success);">
+            <i class="fa-solid fa-circle-dollar-to-slot"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">Payment Received</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Ali Ahmed &bull; 10 mins ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(99,102,241,0.12);color:var(--primary);">
+            <i class="fa-solid fa-calendar-plus"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">New Appointment</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Hawa Hassan &bull; 25 mins ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(239,68,68,0.12);color:var(--danger);">
+            <i class="fa-solid fa-truck-medical"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">ER Admission</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Patient #PT-0982 &bull; 1 hr ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(245,158,11,0.12);color:var(--warning);">
+            <i class="fa-solid fa-flask"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">Lab Results Ready</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Saida Omar &bull; 2 hrs ago</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon" style="background:rgba(14,165,233,0.12);color:var(--accent);">
+            <i class="fa-solid fa-user-plus"></i>
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">New Patient Registered</div>
+            <div style="font-size:0.78rem;color:var(--text-muted);">Mohamed Jama &bull; 3 hrs ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions + Live Queue -->
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;margin-bottom:1.5rem;">
+      <!-- Quick Actions -->
+      <div class="chart-card slide-in" style="animation-delay:0.7s;">
+        <div class="card-title"><i class="fa-solid fa-bolt"></i> Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <a href="appointments.html" class="quick-action-btn">
+            <i class="fa-solid fa-calendar-plus"></i> New Appointment
+          </a>
+          <a href="patients.html" class="quick-action-btn">
+            <i class="fa-solid fa-user-plus"></i> Add Patient
+          </a>
+          <a href="billing.html" class="quick-action-btn">
+            <i class="fa-solid fa-file-invoice"></i> Create Invoice
+          </a>
+          <a href="lab.html" class="quick-action-btn">
+            <i class="fa-solid fa-flask"></i> Order Lab Test
+          </a>
+          <a href="telemedicine.html" class="quick-action-btn">
+            <i class="fa-solid fa-video"></i> Start Video Call
+          </a>
+        </div>
+      </div>
+
+      <!-- Live Queue -->
+      <div class="chart-card slide-in" style="animation-delay:0.8s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div class="card-title" style="margin-bottom:0;">
+            <i class="fa-solid fa-list-check"></i> Live Appointment Queue
+          </div>
+          <span class="badge badge-success">Live</span>
+        </div>
+        <div class="table-container" style="margin-top:1.25rem;border:none;border-radius:var(--radius-md);overflow:hidden;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="live-queue-body">
+              <tr>
+                <td style="font-weight:600;">Ali Ahmed</td>
+                <td style="color:var(--text-muted);">Dr. Jama</td>
+                <td>09:30 AM</td>
+                <td><span class="badge badge-primary">Scheduled</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">Hawa Hassan</td>
+                <td style="color:var(--text-muted);">Dr. Halima</td>
+                <td>10:00 AM</td>
+                <td><span class="badge badge-warning">Waiting</span></td>
+              </tr>
+              <tr>
+                <td style="font-weight:600;">Saida Omar</td>
+                <td style="color:var(--text-muted);">Dr. Jama</td>
+                <td>10:30 AM</td>
+                <td><span class="badge badge-success">Completed</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="chart-card slide-in" style="animation-delay:0.9s;">
+      <div class="card-title"><i class="fa-solid fa-magnifying-glass"></i> Quick Search</div>
+      <div style="display:flex;gap:1rem;">
+        <div style="flex:1;position:relative;">
+          <i class="fa-solid fa-search" style="position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--text-muted);"></i>
+          <input class="form-control" style="padding-left:3rem;" type="text" id="patient-search-dashboard" placeholder="Search patients, appointments, invoices...">
+        </div>
+        <button class="btn btn-primary">
+          <i class="fa-solid fa-bolt"></i> Search
+        </button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  function updateDate() {
+    const lang = localStorage.getItem('clinic_lang') || 'en';
+    const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+    const locales = { en:'en-US', so:'so-SO', ar:'ar-SA' };
+    document.getElementById('current-date').textContent =
+      new Date().toLocaleDateString(locales[lang] || 'en-US', opts);
+  }
+  document.addEventListener('DOMContentLoaded', updateDate);
+  window.addEventListener('languageChanged', updateDate);
+</script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

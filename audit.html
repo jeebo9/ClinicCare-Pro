@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Logs | ClinicCare Pro</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="assets/js/translations.js"></script>
+  <script src="assets/js/i18n.js"></script>
+  <style>
+    /* Audit Logs specific styles */
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background: var(--surface-dark);
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .filter-group select, .filter-group input {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      outline: none;
+      font-size: 0.85rem;
+    }
+
+    .filter-group select:focus, .filter-group input:focus {
+      border-color: var(--primary);
+    }
+
+    .log-row {
+      transition: background 0.2s;
+    }
+    .log-row:hover {
+      background: var(--surface-lighter);
+    }
+
+    .action-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    .action-create { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .action-update { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+    .action-delete { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+    .action-login { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+    .action-security { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+    .ip-badge {
+      font-family: monospace;
+      font-size: 0.75rem;
+      background: var(--bg-dark);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <i class="fa-solid fa-notes-medical"></i> <span data-i18n="brand_name">CLINICCARE</span>
+    </div>
+    
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="dashboard.html"><i class="fa-solid fa-chart-pie"></i> <span data-i18n="dashboard">Dashboard</span></a></li>
+      <li class="nav-item"><a href="patients.html"><i class="fa-solid fa-users"></i> <span data-i18n="patients_management">Patients Management</span></a></li>
+      <li class="nav-item"><a href="appointments.html"><i class="fa-solid fa-calendar-check"></i> <span data-i18n="appointments">Appointments</span></a></li>
+      <li class="nav-item"><a href="billing.html"><i class="fa-solid fa-file-invoice-dollar"></i> <span data-i18n="billing_finance">Billing & Finance</span></a></li>
+      <li class="nav-item"><a href="inventory.html"><i class="fa-solid fa-box-open"></i> <span data-i18n="inventory_pharmacy">Inventory/Pharmacy</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="clinical_services">Clinical Services</div>
+      <li class="nav-item"><a href="lab.html"><i class="fa-solid fa-microscope"></i> <span data-i18n="laboratory">Laboratory</span></a></li>
+      <li class="nav-item"><a href="blood-bank.html"><i class="fa-solid fa-droplet"></i> <span data-i18n="blood_bank">Blood Bank</span></a></li>
+      <li class="nav-item"><a href="emergency.html"><i class="fa-solid fa-truck-medical"></i> <span data-i18n="emergency_er">Emergency ER</span></a></li>
+      
+      <div class="nav-section-label" data-i18n="administration">Administration</div>
+      <li class="nav-item"><a href="users.html"><i class="fa-solid fa-user-gear"></i> <span data-i18n="system_users">System Users</span></a></li>
+      <li class="nav-item"><a href="audit.html" class="active"><i class="fa-solid fa-clipboard-list"></i> <span data-i18n="audit_logs">Audit Logs</span></a></li>
+      <li class="nav-item"><a href="settings.html"><i class="fa-solid fa-gear"></i> <span data-i18n="settings">Settings</span></a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="nav-item" style="list-style: none;"><a href="login.html" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="logout">Logout</span></a></li>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content fade-in">
+    <header class="top-header">
+      <div>
+        <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 0.25rem;" data-i18n="audit_logs">System Security & Audit Logs</h1>
+        <p class="text-muted" data-i18n="audit_desc">Track all user activities and security events in real-time</p>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 1.5rem;">
+        <!-- Language Switcher -->
+        <div class="lang-switcher">
+          <select id="language-switcher-select" onchange="i18n.setLanguage(this.value)" style="padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-light); color: var(--text-main); font-weight: 600; cursor: pointer;">
+            <option value="en">English</option>
+            <option value="so">Somali</option>
+            <option value="ar">العربية</option>
+          </select>
+        </div>
+
+        <div class="user-status-pill">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div class="avatar" style="width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700;">MA</div>
+            <div>
+              <div style="font-size: 0.85rem; font-weight: 700;" id="sidebar-user-name">Mahad Ali</div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);" data-i18n="clinic_manager">Clinic Manager</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      
+      <div class="filter-bar slide-in">
+        <div class="filter-group">
+          <i class="fa-solid fa-filter text-muted"></i>
+          <select>
+            <option>All Modules</option>
+            <option>Patients</option>
+            <option>Appointments</option>
+            <option>Security</option>
+            <option>Settings</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <select>
+            <option>All Users</option>
+            <option>mahad_analyst</option>
+            <option>dr_ahmed</option>
+            <option>reception_barwaqo</option>
+          </select>
+        </div>
+        <div class="filter-group" style="margin-left: auto;">
+          <input type="date">
+        </div>
+        <button class="btn btn-outline" style="padding: 0.5rem 1rem;" onclick="showToast('Exporting logs to CSV...', 'success')">
+          <i class="fa-solid fa-download"></i> Export CSV
+        </button>
+      </div>
+
+      <div class="card slide-in" style="animation-delay: 0.1s;">
+        <div class="card-header">
+          <h3 style="font-weight: 600;"><i class="fa-solid fa-list-check text-primary"></i> Activity Trail</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Event Time</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Details</th>
+                <th>IP Address</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="log-row">
+                <td style="color: var(--text-muted); font-size: 0.85rem;">Today, 09:45 AM</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="avatar" style="width: 24px; height: 24px; font-size: 0.6rem;">MA</div>
+                    <span class="font-semibold">mahad_analyst</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="action-icon action-update"><i class="fa-solid fa-pen"></i></div>
+                    <span style="font-size: 0.85rem; font-weight: 600;">System Settings Updated</span>
+                  </div>
+                </td>
+                <td style="font-size: 0.9rem;">Modified global appearance settings to Dark Mode.</td>
+                <td><span class="ip-badge">192.168.1.5</span></td>
+              </tr>
+
+              <tr class="log-row">
+                <td style="color: var(--text-muted); font-size: 0.85rem;">Today, 09:30 AM</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="avatar" style="width: 24px; height: 24px; font-size: 0.6rem; background: var(--success);">RB</div>
+                    <span class="font-semibold">reception_barwaqo</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="action-icon action-create"><i class="fa-solid fa-plus"></i></div>
+                    <span style="font-size: 0.85rem; font-weight: 600;">Patient Registered</span>
+                  </div>
+                </td>
+                <td style="font-size: 0.9rem;">Created new patient record <strong style="color: var(--primary);">PT-004</strong>.</td>
+                <td><span class="ip-badge">192.168.1.12</span></td>
+              </tr>
+
+              <tr class="log-row">
+                <td style="color: var(--text-muted); font-size: 0.85rem;">Today, 09:15 AM</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="avatar" style="width: 24px; height: 24px; font-size: 0.6rem; background: var(--danger);">?</div>
+                    <span class="font-semibold" style="color: var(--danger);">Unknown User</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="action-icon action-security"><i class="fa-solid fa-shield-virus"></i></div>
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--danger);">Failed Login</span>
+                  </div>
+                </td>
+                <td style="font-size: 0.9rem;">Multiple failed login attempts on admin account.</td>
+                <td><span class="ip-badge" style="border-color: var(--danger); color: var(--danger);">45.12.33.104</span></td>
+              </tr>
+
+              <tr class="log-row">
+                <td style="color: var(--text-muted); font-size: 0.85rem;">Yesterday, 14:20 PM</td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="avatar" style="width: 24px; height: 24px; font-size: 0.6rem; background: var(--accent);">DA</div>
+                    <span class="font-semibold">dr_ahmed</span>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="action-icon action-login"><i class="fa-solid fa-right-to-bracket"></i></div>
+                    <span style="font-size: 0.85rem; font-weight: 600;">User Login</span>
+                  </div>
+                </td>
+                <td style="font-size: 0.9rem;">User logged into the system successfully.</td>
+                <td><span class="ip-badge">192.168.1.8</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div style="padding: 1.5rem; text-align: center; border-top: 1px solid var(--border);">
+          <button class="btn btn-outline">Load More Logs...</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{
+  "patients": [
+    {
+      "id": "PT-001",
+      "name": "Aamina Farah",
+      "phone": "+252 61 1234567",
+      "gender": "Female",
+      "age": 34,
+      "registeredAt": "2023-10-01"
+    },
+    {
+      "id": "PT-002",
+      "name": "Ali Ahmed",
+      "phone": "+252 61 7654321",
+      "gender": "Male",
+      "age": 45,
+      "registeredAt": "2023-10-05"
+    },
+    {
+      "id": "PT-003",
+      "name": "Hawa Hassan",
+      "phone": "+252 61 9876543",
+      "gender": "Female",
+      "age": 28,
+      "registeredAt": "2023-10-12"
+    }
+  ],
+  "appointments": [
+    {
+      "id": "AP-001",
+      "patientName": "Aamina Farah",
+      "doctor": "Dr. Jama",
+      "date": "2026-04-28",
+      "time": "09:00",
+      "status": "Completed"
+    },
+    {
+      "id": "AP-002",
+      "patientName": "Ali Ahmed",
+      "doctor": "Dr. Jama",
+      "date": "2026-04-28",
+      "time": "10:30",
+      "status": "Waiting"
+    },
+    {
+      "id": "AP-003",
+      "patientName": "Hawa Hassan",
+      "doctor": "Dr. Halima",
+      "date": "2026-04-28",
+      "time": "11:15",
+      "status": "Upcoming"
+    }
+  ]
+}

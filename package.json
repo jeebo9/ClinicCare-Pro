@@ -1,0 +1,11 @@
+{
+  "name": "clinic-appointment-system",
+  "version": "1.0.0",
+  "description": "Digital Clinic Server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Mahad Ali (System Analyst)",
+  "license": "ISC"
+}

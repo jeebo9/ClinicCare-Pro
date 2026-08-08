@@ -71,12 +71,6 @@ ClinicCare Pro implements modern security protocols to protect sensitive health 
     ```
 3.  **Access URL:** Open [http://localhost:3005](http://localhost:3005) in your browser.
 
-### 🔑 Admin Credentials
-- **Email:** `admin@gmail.com`
-- **Password:** `admin123`
-- **2FA Code:** `8 8 2 2`
-
----
 
 ## ✍️ AUTHORSHIP
 Developed by **Mahad Ali Nuur (System Analyst)**.
